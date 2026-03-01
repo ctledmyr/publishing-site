@@ -1,0 +1,664 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+// Middleware has already verified authentication before this page renders.
+---
+<BaseLayout title="Admin Dashboard">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <a href="/admin/logout" class="logout-link">Log out</a>
+  </div>
+
+  <!-- ─── Stage 1: Upload & Transcribe ─────────────────────────────────── -->
+  <section class="card" id="stage-upload">
+    <h2>1. Upload Photo</h2>
+    <p class="hint">Upload a photo of handwritten text to transcribe it with Claude.</p>
+
+    <div
+      id="drop-zone"
+      class="drop-zone"
+      role="button"
+      tabindex="0"
+      aria-label="Click or drag and drop an image to upload"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="1.5"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      <p>Drag &amp; drop an image here, or <span class="browse-text">click to browse</span></p>
+      <p class="file-hint">JPEG, PNG, WebP, or GIF — max 20 MB</p>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" />
+    </div>
+
+    <div id="preview-container" class="preview-container hidden">
+      <img id="image-preview" src="" alt="Uploaded image preview" />
+      <button id="clear-image-btn" class="btn btn-ghost btn-sm" type="button">
+        Remove image
+      </button>
+    </div>
+
+    <div class="action-row">
+      <button id="transcribe-btn" class="btn btn-primary" type="button" disabled>
+        Transcribe with Claude
+      </button>
+      <span id="transcribe-status" class="status-text" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <!-- ─── Stage 2: Edit & Publish ──────────────────────────────────────── -->
+  <section class="card" id="stage-content">
+    <h2>2. Edit &amp; Publish</h2>
+
+    <div class="field">
+      <label for="post-title">Title <span class="required">*</span></label>
+      <input type="text" id="post-title" placeholder="My Post Title" autocomplete="off" />
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="post-slug">Slug <span class="required">*</span></label>
+        <input type="text" id="post-slug" placeholder="my-post-title" autocomplete="off" />
+        <span class="field-hint">Auto-generated from title. Used in the URL: /posts/<em id="slug-preview">my-post-title</em></span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="post-description">Description <span class="required">*</span></label>
+      <input type="text" id="post-description" placeholder="A brief description for the post listing" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label for="post-content">Content <span class="required">*</span></label>
+      <textarea
+        id="post-content"
+        rows="20"
+        placeholder="Transcribed or manually written content will appear here..."
+      ></textarea>
+    </div>
+
+    <div class="action-row">
+      <button id="publish-btn" class="btn btn-primary" type="button">
+        Publish Post
+      </button>
+      <span id="publish-status" class="status-text" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <!-- ─── Stage 3: Email Subscribers ──────────────────────────────────── -->
+  <section class="card" id="stage-email" hidden>
+    <h2>3. Notify Subscribers</h2>
+    <p class="hint">Review the email below before sending it to all active subscribers.</p>
+
+    <div id="email-preview-box" class="email-preview">
+      <div class="email-field">
+        <span class="email-label">Subject</span>
+        <span id="email-subject"></span>
+      </div>
+      <div class="email-field">
+        <span class="email-label">Post URL</span>
+        <a id="email-post-url" href="#" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+      <div class="email-field">
+        <span class="email-label">Body</span>
+        <span>
+          A short notification with the post title and a "Read Post" button linking to the post URL.
+          Sent to all active subscribers.
+        </span>
+      </div>
+    </div>
+
+    <p id="subscriber-info" class="hint"></p>
+
+    <div class="action-row">
+      <button id="send-email-btn" class="btn btn-primary" type="button">
+        Send to Subscribers
+      </button>
+      <button id="skip-email-btn" class="btn btn-ghost" type="button">
+        Skip (don&apos;t send)
+      </button>
+      <span id="email-status" class="status-text" aria-live="polite"></span>
+    </div>
+
+    <div id="done-message" class="done-message hidden">
+      <p>All done! Your post is published and subscribers have been notified.</p>
+      <button id="new-post-btn" class="btn btn-primary" type="button">Start a New Post</button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .admin-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: normal;
+  }
+
+  .logout-link {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    text-decoration: none;
+  }
+
+  .logout-link:hover {
+    color: var(--color-text);
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+  }
+
+  .hint {
+    margin: 0 0 1.25rem 0;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+  }
+
+  /* Drop Zone */
+  .drop-zone {
+    border: 2px dashed var(--color-border);
+    border-radius: 6px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+  }
+
+  .drop-zone:hover,
+  .drop-zone.drag-over {
+    border-color: var(--color-accent);
+    background-color: #f9f9f9;
+  }
+
+  .drop-zone svg {
+    margin-bottom: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .drop-zone p {
+    margin: 0 0 0.25rem 0;
+  }
+
+  .file-hint {
+    font-size: 0.8rem;
+    color: #aaaaaa;
+  }
+
+  .browse-text {
+    text-decoration: underline;
+    color: var(--color-text);
+  }
+
+  .drop-zone input[type="file"] {
+    display: none;
+  }
+
+  /* Image Preview */
+  .preview-container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .preview-container img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    object-fit: contain;
+  }
+
+  /* Form Fields */
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .field-row .field {
+    flex: 1;
+  }
+
+  label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin-bottom: 0.35rem;
+  }
+
+  .required {
+    color: #b91c1c;
+  }
+
+  .field-hint {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    margin-top: 0.3rem;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: #ffffff;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  textarea {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus {
+    border-color: var(--color-accent);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.15rem;
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    border: 1px solid transparent;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border-color: var(--color-accent);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+
+  .btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .btn:hover:not(:disabled) {
+    opacity: 0.75;
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Action Row */
+  .action-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .status-text {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .status-text.error {
+    color: #b91c1c;
+  }
+
+  .status-text.success {
+    color: #2d6a2d;
+  }
+
+  /* Email Preview */
+  .email-preview {
+    background: #f9f9f9;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .email-field {
+    display: flex;
+    gap: 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+
+  .email-label {
+    min-width: 70px;
+    font-weight: 600;
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+
+  /* Done Message */
+  .done-message {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: #f0faf0;
+    border: 1px solid #a3d9a5;
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+  }
+
+  .done-message p {
+    margin: 0 0 1rem 0;
+    color: #2d6a2d;
+  }
+
+  /* Utilities */
+  .hidden {
+    display: none !important;
+  }
+</style>
+
+<script>
+  // ─── State ─────────────────────────────────────────────────────────────────
+  let uploadedFile: File | null = null;
+  let publishedPostURL = '';
+  let publishedPostTitle = '';
+
+  // ─── DOM References ────────────────────────────────────────────────────────
+  const dropZone = document.getElementById('drop-zone') as HTMLDivElement;
+  const fileInput = document.getElementById('file-input') as HTMLInputElement;
+  const previewContainer = document.getElementById('preview-container') as HTMLDivElement;
+  const imagePreview = document.getElementById('image-preview') as HTMLImageElement;
+  const clearImageBtn = document.getElementById('clear-image-btn') as HTMLButtonElement;
+  const transcribeBtn = document.getElementById('transcribe-btn') as HTMLButtonElement;
+  const transcribeStatus = document.getElementById('transcribe-status') as HTMLSpanElement;
+
+  const postTitle = document.getElementById('post-title') as HTMLInputElement;
+  const postSlug = document.getElementById('post-slug') as HTMLInputElement;
+  const slugPreview = document.getElementById('slug-preview') as HTMLElement;
+  const postDescription = document.getElementById('post-description') as HTMLInputElement;
+  const postContent = document.getElementById('post-content') as HTMLTextAreaElement;
+  const publishBtn = document.getElementById('publish-btn') as HTMLButtonElement;
+  const publishStatus = document.getElementById('publish-status') as HTMLSpanElement;
+
+  const stageEmail = document.getElementById('stage-email') as HTMLElement;
+  const emailSubject = document.getElementById('email-subject') as HTMLSpanElement;
+  const emailPostUrl = document.getElementById('email-post-url') as HTMLAnchorElement;
+  const subscriberInfo = document.getElementById('subscriber-info') as HTMLParagraphElement;
+  const sendEmailBtn = document.getElementById('send-email-btn') as HTMLButtonElement;
+  const skipEmailBtn = document.getElementById('skip-email-btn') as HTMLButtonElement;
+  const emailStatus = document.getElementById('email-status') as HTMLSpanElement;
+  const doneMessage = document.getElementById('done-message') as HTMLDivElement;
+  const newPostBtn = document.getElementById('new-post-btn') as HTMLButtonElement;
+
+  // ─── Helpers ───────────────────────────────────────────────────────────────
+  function setStatus(el: HTMLSpanElement, text: string, type: 'idle' | 'error' | 'success' = 'idle') {
+    el.textContent = text;
+    el.className = `status-text${type !== 'idle' ? ' ' + type : ''}`;
+  }
+
+  function toSlug(s: string): string {
+    return s
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  // ─── File / Drop Zone ──────────────────────────────────────────────────────
+  function handleFile(file: File) {
+    if (!file.type.startsWith('image/')) {
+      setStatus(transcribeStatus, 'Please select an image file.', 'error');
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      setStatus(transcribeStatus, 'Image must be under 20 MB.', 'error');
+      return;
+    }
+    uploadedFile = file;
+    imagePreview.src = URL.createObjectURL(file);
+    previewContainer.classList.remove('hidden');
+    transcribeBtn.disabled = false;
+    setStatus(transcribeStatus, '');
+  }
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer?.files[0];
+    if (file) handleFile(file);
+  });
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files?.[0];
+    if (file) handleFile(file);
+  });
+
+  clearImageBtn.addEventListener('click', () => {
+    uploadedFile = null;
+    imagePreview.src = '';
+    previewContainer.classList.add('hidden');
+    transcribeBtn.disabled = true;
+    fileInput.value = '';
+    setStatus(transcribeStatus, '');
+  });
+
+  // ─── Auto-slug from title ──────────────────────────────────────────────────
+  postTitle.addEventListener('input', () => {
+    const slug = toSlug(postTitle.value);
+    postSlug.value = slug;
+    slugPreview.textContent = slug || 'my-post-title';
+  });
+
+  postSlug.addEventListener('input', () => {
+    slugPreview.textContent = postSlug.value || 'my-post-title';
+  });
+
+  // ─── Transcribe ────────────────────────────────────────────────────────────
+  transcribeBtn.addEventListener('click', async () => {
+    if (!uploadedFile) return;
+
+    transcribeBtn.disabled = true;
+    setStatus(transcribeStatus, 'Transcribing… this may take up to 30 seconds.');
+
+    const formData = new FormData();
+    formData.append('image', uploadedFile);
+
+    try {
+      const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
+      const result = await res.json();
+
+      if (res.ok && result.text) {
+        postContent.value = result.text;
+        setStatus(transcribeStatus, 'Transcription complete. Edit the content below.', 'success');
+      } else {
+        setStatus(transcribeStatus, result.error || 'Transcription failed. Please try again.', 'error');
+        transcribeBtn.disabled = false;
+      }
+    } catch {
+      setStatus(transcribeStatus, 'Network error. Please try again.', 'error');
+      transcribeBtn.disabled = false;
+    }
+  });
+
+  // ─── Publish ───────────────────────────────────────────────────────────────
+  publishBtn.addEventListener('click', async () => {
+    const title = postTitle.value.trim();
+    const slug = postSlug.value.trim();
+    const description = postDescription.value.trim();
+    const content = postContent.value.trim();
+
+    if (!title || !slug || !description || !content) {
+      setStatus(publishStatus, 'Please fill in all required fields.', 'error');
+      return;
+    }
+
+    publishBtn.disabled = true;
+    setStatus(publishStatus, 'Publishing to GitHub…');
+
+    try {
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, slug, description, content }),
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        publishedPostURL = result.url;
+        publishedPostTitle = title;
+
+        setStatus(
+          publishStatus,
+          `Published! Your post will be live at ${result.url} once the site rebuilds (~2 min).`,
+          'success'
+        );
+
+        // Reveal email stage
+        stageEmail.hidden = false;
+        stageEmail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        emailSubject.textContent = `New Post: ${title}`;
+        emailPostUrl.textContent = result.url;
+        emailPostUrl.href = result.url;
+        subscriberInfo.textContent =
+          'Sending will notify all active subscribers with a link to this post.';
+      } else {
+        setStatus(publishStatus, result.error || 'Publish failed. Please try again.', 'error');
+        publishBtn.disabled = false;
+      }
+    } catch {
+      setStatus(publishStatus, 'Network error. Please try again.', 'error');
+      publishBtn.disabled = false;
+    }
+  });
+
+  // ─── Send Email ────────────────────────────────────────────────────────────
+  sendEmailBtn.addEventListener('click', async () => {
+    if (!publishedPostURL) return;
+
+    sendEmailBtn.disabled = true;
+    skipEmailBtn.disabled = true;
+    setStatus(emailStatus, 'Sending…');
+
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postTitle: publishedPostTitle,
+          postURL: publishedPostURL,
+        }),
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        const msg = result.sent === 0
+          ? 'No active subscribers to notify.'
+          : `Sent to ${result.sent} subscriber${result.sent === 1 ? '' : 's'}.`;
+        setStatus(emailStatus, msg, 'success');
+        doneMessage.classList.remove('hidden');
+      } else {
+        setStatus(emailStatus, result.error || 'Send failed. Please try again.', 'error');
+        sendEmailBtn.disabled = false;
+        skipEmailBtn.disabled = false;
+      }
+    } catch {
+      setStatus(emailStatus, 'Network error. Please try again.', 'error');
+      sendEmailBtn.disabled = false;
+      skipEmailBtn.disabled = false;
+    }
+  });
+
+  skipEmailBtn.addEventListener('click', () => {
+    setStatus(emailStatus, 'Skipped email send.', 'idle');
+    doneMessage.classList.remove('hidden');
+  });
+
+  // ─── Start a New Post ──────────────────────────────────────────────────────
+  newPostBtn.addEventListener('click', () => {
+    // Reset all state
+    uploadedFile = null;
+    publishedPostURL = '';
+    publishedPostTitle = '';
+
+    imagePreview.src = '';
+    previewContainer.classList.add('hidden');
+    transcribeBtn.disabled = true;
+    fileInput.value = '';
+
+    postTitle.value = '';
+    postSlug.value = '';
+    slugPreview.textContent = 'my-post-title';
+    postDescription.value = '';
+    postContent.value = '';
+    publishBtn.disabled = false;
+
+    stageEmail.hidden = true;
+    doneMessage.classList.add('hidden');
+    sendEmailBtn.disabled = false;
+    skipEmailBtn.disabled = false;
+
+    [transcribeStatus, publishStatus, emailStatus].forEach((el) => setStatus(el, ''));
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>

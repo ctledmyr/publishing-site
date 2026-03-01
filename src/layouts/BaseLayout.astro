@@ -1,0 +1,109 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'A handwritten publishing site.' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --color-text: #111111;
+        --color-muted: #666666;
+        --color-border: #dddddd;
+        --color-bg: #ffffff;
+        --color-accent: #111111;
+        --font-serif: Georgia, 'Times New Roman', serif;
+        --font-sans: system-ui, -apple-system, sans-serif;
+        --max-width: 680px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-serif);
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      .site-wrapper {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 2rem 1.25rem;
+      }
+
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      header a {
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        color: var(--color-muted);
+        text-decoration: none;
+      }
+
+      header a:hover {
+        color: var(--color-text);
+      }
+
+      .site-name {
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--color-text);
+        text-decoration: none;
+      }
+
+      footer {
+        margin-top: 4rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border);
+        font-family: var(--font-sans);
+        font-size: 0.8rem;
+        color: var(--color-muted);
+      }
+
+      a {
+        color: var(--color-text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="site-wrapper">
+      <header>
+        <a href="/" class="site-name">Publishing Site</a>
+        <nav>
+          <a href="/#subscribe">Subscribe</a>
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer>
+        <p>&copy; {new Date().getFullYear()} Publishing Site</p>
+      </footer>
+    </div>
+  </body>
+</html>

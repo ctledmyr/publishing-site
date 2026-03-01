@@ -1,0 +1,246 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout title="Publishing Site" description="A handwritten publishing site.">
+  <section class="posts-section">
+    <h1>Posts</h1>
+
+    {posts.length === 0 ? (
+      <p class="empty-state">No posts yet. Check back soon.</p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-item">
+            <a href={`/posts/${post.slug}`} class="post-link">
+              <span class="post-title">{post.data.title}</span>
+              <time
+                datetime={post.data.date.toISOString()}
+                class="post-date"
+              >
+                {post.data.date.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+            </a>
+            {post.data.description && (
+              <p class="post-description">{post.data.description}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <hr class="divider" />
+
+  <section id="subscribe" class="subscribe-section">
+    <h2>Subscribe</h2>
+    <p>Get new posts delivered straight to your inbox.</p>
+
+    <form id="subscribe-form" class="subscribe-form" novalidate>
+      <div class="form-row">
+        <input
+          type="email"
+          id="subscribe-email"
+          name="email"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        />
+        <button type="submit">Subscribe</button>
+      </div>
+      <p id="subscribe-message" class="form-message" aria-live="polite"></p>
+    </form>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: 1.75rem;
+    font-weight: normal;
+    margin: 0 0 2rem 0;
+  }
+
+  .empty-state {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .post-item {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-item:last-child {
+    border-bottom: none;
+  }
+
+  .post-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-decoration: none;
+  }
+
+  .post-title {
+    font-size: 1.2rem;
+    color: var(--color-text);
+    transition: opacity 0.15s;
+  }
+
+  .post-link:hover .post-title {
+    opacity: 0.7;
+  }
+
+  .post-date {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .post-description {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  .divider {
+    margin: 3rem 0;
+    border: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .subscribe-section h2 {
+    font-size: 1.4rem;
+    font-weight: normal;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subscribe-section p {
+    margin: 0 0 1.25rem 0;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  input[type="email"] {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="email"]:focus {
+    border-color: var(--color-accent);
+  }
+
+  button[type="submit"] {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  button[type="submit"]:hover {
+    opacity: 0.8;
+  }
+
+  button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin: 0.75rem 0 0 0;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    min-height: 1.2em;
+  }
+
+  .form-message.success {
+    color: #2d6a2d;
+  }
+
+  .form-message.error {
+    color: #b91c1c;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('subscribe-form') as HTMLFormElement;
+  const emailInput = document.getElementById('subscribe-email') as HTMLInputElement;
+  const message = document.getElementById('subscribe-message') as HTMLParagraphElement;
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = emailInput.value.trim();
+    if (!email) return;
+
+    submitBtn.disabled = true;
+    message.textContent = 'Subscribing...';
+    message.className = 'form-message';
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        message.textContent = 'Subscribed! Thank you.';
+        message.className = 'form-message success';
+        emailInput.value = '';
+      } else if (res.status === 409) {
+        message.textContent = 'You\'re already subscribed.';
+        message.className = 'form-message error';
+      } else {
+        message.textContent = result.error || 'Something went wrong. Please try again.';
+        message.className = 'form-message error';
+      }
+    } catch {
+      message.textContent = 'Network error. Please try again.';
+      message.className = 'form-message error';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
