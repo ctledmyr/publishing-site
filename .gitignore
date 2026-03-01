@@ -1,0 +1,23 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Astro build output
+dist/
+.astro/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
