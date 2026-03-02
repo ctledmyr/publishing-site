@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
