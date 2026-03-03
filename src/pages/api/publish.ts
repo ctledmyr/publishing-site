@@ -54,6 +54,7 @@ async function getFileSHA(
 }
 
 export const POST: APIRoute = async ({ request }) => {
+  console.log('[publish] POST handler reached');
   let body: PublishBody;
   try {
     body = await request.json();
