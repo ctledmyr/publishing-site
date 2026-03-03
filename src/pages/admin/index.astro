@@ -11,15 +11,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   <!-- ─── Stage 1: Upload & Transcribe ─────────────────────────────────── -->
   <section class="card" id="stage-upload">
-    <h2>1. Upload Photo</h2>
-    <p class="hint">Upload a photo of handwritten text to transcribe it with Claude.</p>
+    <h2>1. Upload &amp; Transcribe</h2>
+
+    <!-- Transcription instructions -->
+    <div class="field">
+      <label for="transcribe-instructions">Transcription instructions</label>
+      <textarea
+        id="transcribe-instructions"
+        rows="3"
+      >Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out.</textarea>
+    </div>
+
+    <p class="hint">Upload one or more photos of handwritten text.</p>
 
     <div
       id="drop-zone"
       class="drop-zone"
       role="button"
       tabindex="0"
-      aria-label="Click or drag and drop an image to upload"
+      aria-label="Click or drag and drop images to upload"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
            fill="none" stroke="currentColor" stroke-width="1.5"
@@ -28,15 +38,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <polyline points="17 8 12 3 7 8"/>
         <line x1="12" y1="3" x2="12" y2="15"/>
       </svg>
-      <p>Drag &amp; drop an image here, or <span class="browse-text">click to browse</span></p>
-      <p class="file-hint">JPEG, PNG, WebP, or GIF — max 20 MB</p>
-      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" />
+      <p>Drag &amp; drop images here, or <span class="browse-text">click to browse</span></p>
+      <p class="file-hint">JPEG, PNG, WebP, or GIF &mdash; max 20 MB each &mdash; multiple files allowed</p>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
     </div>
 
     <div id="preview-container" class="preview-container hidden">
-      <img id="image-preview" src="" alt="Uploaded image preview" />
+      <div id="preview-list" class="preview-list"></div>
       <button id="clear-image-btn" class="btn btn-ghost btn-sm" type="button">
-        Remove image
+        Remove all images
       </button>
     </div>
 
@@ -57,17 +67,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <input type="text" id="post-title" placeholder="My Post Title" autocomplete="off" />
     </div>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="post-slug">Slug <span class="required">*</span></label>
-        <input type="text" id="post-slug" placeholder="my-post-title" autocomplete="off" />
-        <span class="field-hint">Auto-generated from title. Used in the URL: /posts/<em id="slug-preview">my-post-title</em></span>
-      </div>
+    <div class="field">
+      <label for="post-slug">Slug <span class="required">*</span></label>
+      <input type="text" id="post-slug" placeholder="my-post-title" autocomplete="off" />
+      <span class="field-hint">Auto-generated from title. URL: /posts/<em id="slug-preview">my-post-title</em></span>
     </div>
 
     <div class="field">
       <label for="post-description">Description <span class="required">*</span></label>
-      <input type="text" id="post-description" placeholder="A brief description for the post listing" autocomplete="off" />
+      <input type="text" id="post-description" placeholder="Brief description for the post listing" autocomplete="off" />
     </div>
 
     <div class="field">
@@ -103,10 +111,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
       <div class="email-field">
         <span class="email-label">Body</span>
-        <span>
-          A short notification with the post title and a "Read Post" button linking to the post URL.
-          Sent to all active subscribers.
-        </span>
+        <span>A short notification with the post title and a "Read Post" button linking to the post URL. Sent to all active subscribers.</span>
       </div>
     </div>
 
@@ -150,9 +155,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     text-decoration: none;
   }
 
-  .logout-link:hover {
-    color: var(--color-text);
-  }
+  .logout-link:hover { color: var(--color-text); }
 
   .card {
     background: #ffffff;
@@ -195,28 +198,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     background-color: #f9f9f9;
   }
 
-  .drop-zone svg {
-    margin-bottom: 0.75rem;
-    color: var(--color-muted);
-  }
-
-  .drop-zone p {
-    margin: 0 0 0.25rem 0;
-  }
-
-  .file-hint {
-    font-size: 0.8rem;
-    color: #aaaaaa;
-  }
-
-  .browse-text {
-    text-decoration: underline;
-    color: var(--color-text);
-  }
-
-  .drop-zone input[type="file"] {
-    display: none;
-  }
+  .drop-zone svg { margin-bottom: 0.75rem; color: var(--color-muted); }
+  .drop-zone p { margin: 0 0 0.25rem 0; }
+  .file-hint { font-size: 0.8rem; color: #aaaaaa; }
+  .browse-text { text-decoration: underline; color: var(--color-text); }
+  .drop-zone input[type="file"] { display: none; }
 
   /* Image Preview */
   .preview-container {
@@ -227,27 +213,41 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     gap: 0.75rem;
   }
 
-  .preview-container img {
-    max-width: 100%;
-    max-height: 400px;
+  .preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .preview-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    max-width: 100px;
+  }
+
+  .preview-item img {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
     border-radius: 4px;
     border: 1px solid var(--color-border);
-    object-fit: contain;
+  }
+
+  .preview-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
   }
 
   /* Form Fields */
-  .field {
-    margin-bottom: 1.25rem;
-  }
-
-  .field-row {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .field-row .field {
-    flex: 1;
-  }
+  .field { margin-bottom: 1.25rem; }
 
   label {
     display: block;
@@ -258,9 +258,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     margin-bottom: 0.35rem;
   }
 
-  .required {
-    color: #b91c1c;
-  }
+  .required { color: #b91c1c; }
 
   .field-hint {
     display: block;
@@ -284,7 +282,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     transition: border-color 0.15s;
   }
 
-  textarea {
+  #post-content,
+  #transcribe-instructions {
     font-family: 'Courier New', monospace;
     font-size: 0.875rem;
     resize: vertical;
@@ -292,9 +291,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   input[type="text"]:focus,
-  textarea:focus {
-    border-color: var(--color-accent);
-  }
+  textarea:focus { border-color: var(--color-accent); }
 
   /* Buttons */
   .btn {
@@ -311,31 +308,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-weight: 500;
   }
 
-  .btn-primary {
-    background-color: var(--color-accent);
-    color: #ffffff;
-    border-color: var(--color-accent);
-  }
-
-  .btn-ghost {
-    background-color: transparent;
-    color: var(--color-text);
-    border-color: var(--color-border);
-  }
-
-  .btn-sm {
-    padding: 0.35rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
-  .btn:hover:not(:disabled) {
-    opacity: 0.75;
-  }
-
-  .btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  .btn-primary { background-color: var(--color-accent); color: #ffffff; border-color: var(--color-accent); }
+  .btn-ghost { background-color: transparent; color: var(--color-text); border-color: var(--color-border); }
+  .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+  .btn:hover:not(:disabled) { opacity: 0.75; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* Action Row */
   .action-row {
@@ -346,19 +323,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     flex-wrap: wrap;
   }
 
-  .status-text {
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    color: var(--color-muted);
-  }
-
-  .status-text.error {
-    color: #b91c1c;
-  }
-
-  .status-text.success {
-    color: #2d6a2d;
-  }
+  .status-text { font-family: var(--font-sans); font-size: 0.875rem; color: var(--color-muted); }
+  .status-text.error { color: #b91c1c; }
+  .status-text.success { color: #2d6a2d; }
 
   /* Email Preview */
   .email-preview {
@@ -397,20 +364,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 0.9rem;
   }
 
-  .done-message p {
-    margin: 0 0 1rem 0;
-    color: #2d6a2d;
-  }
+  .done-message p { margin: 0 0 1rem 0; color: #2d6a2d; }
 
-  /* Utilities */
-  .hidden {
-    display: none !important;
-  }
+  .hidden { display: none !important; }
 </style>
 
 <script>
   // ─── State ─────────────────────────────────────────────────────────────────
-  let uploadedFile: File | null = null;
+  let uploadedFiles: File[] = [];
   let publishedPostURL = '';
   let publishedPostTitle = '';
 
@@ -418,10 +379,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const dropZone = document.getElementById('drop-zone') as HTMLDivElement;
   const fileInput = document.getElementById('file-input') as HTMLInputElement;
   const previewContainer = document.getElementById('preview-container') as HTMLDivElement;
-  const imagePreview = document.getElementById('image-preview') as HTMLImageElement;
+  const previewList = document.getElementById('preview-list') as HTMLDivElement;
   const clearImageBtn = document.getElementById('clear-image-btn') as HTMLButtonElement;
   const transcribeBtn = document.getElementById('transcribe-btn') as HTMLButtonElement;
   const transcribeStatus = document.getElementById('transcribe-status') as HTMLSpanElement;
+  const transcribeInstructions = document.getElementById('transcribe-instructions') as HTMLTextAreaElement;
 
   const postTitle = document.getElementById('post-title') as HTMLInputElement;
   const postSlug = document.getElementById('post-slug') as HTMLInputElement;
@@ -456,21 +418,45 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       .replace(/-+/g, '-');
   }
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
   // ─── File / Drop Zone ──────────────────────────────────────────────────────
-  function handleFile(file: File) {
-    if (!file.type.startsWith('image/')) {
-      setStatus(transcribeStatus, 'Please select an image file.', 'error');
-      return;
-    }
-    if (file.size > 20 * 1024 * 1024) {
-      setStatus(transcribeStatus, 'Image must be under 20 MB.', 'error');
-      return;
-    }
-    uploadedFile = file;
-    imagePreview.src = URL.createObjectURL(file);
+  function handleFiles(files: FileList | File[]) {
+    const arr = Array.from(files);
+    const valid = arr.filter(f => {
+      if (!ALLOWED_TYPES.includes(f.type)) {
+        setStatus(transcribeStatus, `"${f.name}" is not a supported image type.`, 'error');
+        return false;
+      }
+      if (f.size > 20 * 1024 * 1024) {
+        setStatus(transcribeStatus, `"${f.name}" exceeds 20 MB.`, 'error');
+        return false;
+      }
+      return true;
+    });
+
+    if (valid.length === 0) return;
+
+    uploadedFiles = valid;
+
+    // Build preview thumbnails
+    previewList.innerHTML = '';
+    valid.forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.alt = file.name;
+      const name = document.createElement('span');
+      name.textContent = file.name;
+      item.appendChild(img);
+      item.appendChild(name);
+      previewList.appendChild(item);
+    });
+
     previewContainer.classList.remove('hidden');
     transcribeBtn.disabled = false;
-    setStatus(transcribeStatus, '');
+    setStatus(transcribeStatus, `${valid.length} image${valid.length > 1 ? 's' : ''} ready.`);
   }
 
   dropZone.addEventListener('click', () => fileInput.click());
@@ -485,17 +471,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
-    const file = e.dataTransfer?.files[0];
-    if (file) handleFile(file);
+    if (e.dataTransfer?.files.length) handleFiles(e.dataTransfer.files);
   });
   fileInput.addEventListener('change', () => {
-    const file = fileInput.files?.[0];
-    if (file) handleFile(file);
+    if (fileInput.files?.length) handleFiles(fileInput.files);
   });
 
   clearImageBtn.addEventListener('click', () => {
-    uploadedFile = null;
-    imagePreview.src = '';
+    uploadedFiles = [];
+    previewList.innerHTML = '';
     previewContainer.classList.add('hidden');
     transcribeBtn.disabled = true;
     fileInput.value = '';
@@ -513,31 +497,57 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     slugPreview.textContent = postSlug.value || 'my-post-title';
   });
 
-  // ─── Transcribe ────────────────────────────────────────────────────────────
+  // ─── Transcribe (sequential, one image at a time) ─────────────────────────
   transcribeBtn.addEventListener('click', async () => {
-    if (!uploadedFile) return;
+    if (uploadedFiles.length === 0) return;
 
     transcribeBtn.disabled = true;
-    setStatus(transcribeStatus, 'Transcribing… this may take up to 30 seconds.');
+    const instructions = transcribeInstructions.value.trim() ||
+      'Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out.';
 
-    const formData = new FormData();
-    formData.append('image', uploadedFile);
+    const results: string[] = [];
 
-    try {
-      const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
-      const result = await res.json();
+    for (let i = 0; i < uploadedFiles.length; i++) {
+      const file = uploadedFiles[i];
+      setStatus(
+        transcribeStatus,
+        uploadedFiles.length > 1
+          ? `Transcribing image ${i + 1} of ${uploadedFiles.length}…`
+          : 'Transcribing… this may take up to 30 seconds.'
+      );
 
-      if (res.ok && result.text) {
-        postContent.value = result.text;
-        setStatus(transcribeStatus, 'Transcription complete. Edit the content below.', 'success');
-      } else {
-        setStatus(transcribeStatus, result.error || 'Transcription failed. Please try again.', 'error');
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('instructions', instructions);
+
+      try {
+        const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
+        const result = await res.json();
+
+        if (res.ok && result.text) {
+          results.push(result.text);
+        } else {
+          setStatus(transcribeStatus, `Image ${i + 1}: ${result.error || 'Transcription failed.'}`, 'error');
+          transcribeBtn.disabled = false;
+          return;
+        }
+      } catch {
+        setStatus(transcribeStatus, `Network error on image ${i + 1}. Please try again.`, 'error');
         transcribeBtn.disabled = false;
+        return;
       }
-    } catch {
-      setStatus(transcribeStatus, 'Network error. Please try again.', 'error');
-      transcribeBtn.disabled = false;
     }
+
+    // Join all transcriptions with a separator between pages
+    postContent.value = results.join('\n\n---\n\n');
+    setStatus(
+      transcribeStatus,
+      results.length > 1
+        ? `${results.length} images transcribed. Review and edit the content below.`
+        : 'Transcription complete. Edit the content below.',
+      'success'
+    );
+    transcribeBtn.disabled = false;
   });
 
   // ─── Publish ───────────────────────────────────────────────────────────────
@@ -573,15 +583,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           'success'
         );
 
-        // Reveal email stage
         stageEmail.hidden = false;
         stageEmail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         emailSubject.textContent = `New Post: ${title}`;
         emailPostUrl.textContent = result.url;
         emailPostUrl.href = result.url;
-        subscriberInfo.textContent =
-          'Sending will notify all active subscribers with a link to this post.';
+        subscriberInfo.textContent = 'Sending will notify all active subscribers with a link to this post.';
       } else {
         setStatus(publishStatus, result.error || 'Publish failed. Please try again.', 'error');
         publishBtn.disabled = false;
@@ -604,10 +612,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          postTitle: publishedPostTitle,
-          postURL: publishedPostURL,
-        }),
+        body: JSON.stringify({ postTitle: publishedPostTitle, postURL: publishedPostURL }),
       });
       const result = await res.json();
 
@@ -636,12 +641,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   // ─── Start a New Post ──────────────────────────────────────────────────────
   newPostBtn.addEventListener('click', () => {
-    // Reset all state
-    uploadedFile = null;
+    uploadedFiles = [];
     publishedPostURL = '';
     publishedPostTitle = '';
 
-    imagePreview.src = '';
+    previewList.innerHTML = '';
     previewContainer.classList.add('hidden');
     transcribeBtn.disabled = true;
     fileInput.value = '';
@@ -658,7 +662,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     sendEmailBtn.disabled = false;
     skipEmailBtn.disabled = false;
 
-    [transcribeStatus, publishStatus, emailStatus].forEach((el) => setStatus(el, ''));
+    [transcribeStatus, publishStatus, emailStatus].forEach(el => setStatus(el, ''));
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });

@@ -17,6 +17,10 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const file = formData.get('image');
+  const customInstructions = formData.get('instructions');
+  const instructions = (typeof customInstructions === 'string' && customInstructions.trim())
+    ? customInstructions.trim()
+    : 'Please transcribe all the text in this image exactly as it appears. Preserve paragraph breaks and formatting where possible. Return only the transcribed text — no commentary, no explanation.';
 
   if (!file || !(file instanceof File)) {
     return json({ error: 'An image file is required (field name: "image").' }, 400);
@@ -56,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
             },
             {
               type: 'text',
-              text: 'Please transcribe all the text in this image exactly as it appears. Preserve paragraph breaks and formatting where possible. Return only the transcribed text — no commentary, no explanation.',
+              text: instructions,
             },
           ],
         },
