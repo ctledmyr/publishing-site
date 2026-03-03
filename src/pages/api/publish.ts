@@ -25,6 +25,9 @@ function buildMarkdown(data: { title: string; slug: string; description: string;
   const safeTitle = data.title.replace(/"/g, '\\"');
   const safeDescription = data.description.replace(/"/g, '\\"');
 
+  // Convert single newlines to double newlines so each line renders as its own paragraph
+  const body = data.content.trim().replace(/\n(?!\n)/g, '\n\n');
+
   return `---
 title: "${safeTitle}"
 description: "${safeDescription}"
@@ -32,7 +35,7 @@ date: "${date}"
 draft: false
 ---
 
-${data.content.trim()}
+${body}
 `;
 }
 

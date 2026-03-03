@@ -2,6 +2,7 @@ interface EmailTemplateData {
   postTitle: string;
   postURL: string;
   siteURL?: string;
+  postContent?: string;
 }
 
 /**
@@ -20,7 +21,19 @@ function escapeHTML(str: string): string {
  * Generate a table-based HTML email (compatible with most email clients).
  * Inline styles only — no external CSS, no Grid/Flexbox.
  */
-export function generateEmailHTML({ postTitle, postURL, siteURL }: EmailTemplateData): string {
+/**
+ * Convert plain text to email-safe HTML paragraphs.
+ * Splits on blank lines (double newlines) to form paragraphs; escapes all HTML.
+ */
+function contentToHTML(text: string): string {
+  return text
+    .trim()
+    .split(/\n\n+/)
+    .map(para => `<p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">${escapeHTML(para.replace(/\n/g, ' '))}</p>`)
+    .join('\n');
+}
+
+export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: EmailTemplateData): string {
   const safeTitle = escapeHTML(postTitle);
   const safeURL = escapeHTML(postURL);
 
@@ -59,10 +72,10 @@ export function generateEmailHTML({ postTitle, postURL, siteURL }: EmailTemplate
                          color: #111111; font-weight: normal;">
                 ${safeTitle}
               </h1>
-              <p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.7;
-                        color: #555555;">
-                A new post has been published. Click the button below to read it.
-              </p>
+              ${postContent
+                ? `<div style="margin: 0 0 32px 0;">${contentToHTML(postContent)}</div>`
+                : `<p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.7; color: #555555;">A new post has been published. Click the button below to read it.</p>`
+              }
               <!-- CTA Button -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                 <tr>

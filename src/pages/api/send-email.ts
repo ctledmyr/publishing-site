@@ -10,11 +10,13 @@ const BATCH_SIZE = 100; // Resend batch API limit
 export const POST: APIRoute = async ({ request }) => {
   let postTitle: string;
   let postURL: string;
+  let postContent: string | undefined;
 
   try {
     const body = await request.json();
     postTitle = body.postTitle;
     postURL = body.postURL;
+    postContent = typeof body.postContent === 'string' ? body.postContent : undefined;
   } catch {
     return json({ error: 'Expected JSON body.' }, 400);
   }
@@ -47,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
   const siteURL = import.meta.env.SITE_URL;
 
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
-  const emailHTML = generateEmailHTML({ postTitle, postURL, siteURL });
+  const emailHTML = generateEmailHTML({ postTitle, postURL, siteURL, postContent });
   const subject = `New Post: ${postTitle}`;
 
   // Build email objects for every subscriber

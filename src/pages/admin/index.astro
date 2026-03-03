@@ -374,6 +374,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   let uploadedFiles: File[] = [];
   let publishedPostURL = '';
   let publishedPostTitle = '';
+  let publishedPostContent = '';
 
   // ─── DOM References ────────────────────────────────────────────────────────
   const dropZone = document.getElementById('drop-zone') as HTMLDivElement;
@@ -576,6 +577,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       if (res.ok) {
         publishedPostURL = result.url;
         publishedPostTitle = title;
+        publishedPostContent = content;
 
         setStatus(
           publishStatus,
@@ -612,7 +614,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postTitle: publishedPostTitle, postURL: publishedPostURL }),
+        body: JSON.stringify({ postTitle: publishedPostTitle, postURL: publishedPostURL, postContent: publishedPostContent }),
       });
       const result = await res.json();
 
@@ -644,6 +646,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     uploadedFiles = [];
     publishedPostURL = '';
     publishedPostTitle = '';
+    publishedPostContent = '';
 
     previewList.innerHTML = '';
     previewContainer.classList.add('hidden');

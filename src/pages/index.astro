@@ -5,16 +5,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const renderedPosts = await Promise.all(
+  posts.map(async (post) => ({ post, Content: (await post.render()).Content }))
+);
 ---
 <BaseLayout title="Publishing Site" description="A handwritten publishing site.">
   <section class="posts-section">
     <h1>Posts</h1>
 
-    {posts.length === 0 ? (
+    {renderedPosts.length === 0 ? (
       <p class="empty-state">No posts yet. Check back soon.</p>
     ) : (
       <ul class="post-list">
-        {posts.map((post) => (
+        {renderedPosts.map(({ post, Content }) => (
           <li class="post-item">
             <a href={`/posts/${post.slug}`} class="post-link">
               <span class="post-title">{post.data.title}</span>
@@ -29,9 +32,9 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
                 })}
               </time>
             </a>
-            {post.data.description && (
-              <p class="post-description">{post.data.description}</p>
-            )}
+            <div class="post-content">
+              <Content />
+            </div>
           </li>
         ))}
       </ul>
@@ -114,11 +117,19 @@ const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueO
     color: var(--color-muted);
   }
 
-  .post-description {
-    margin: 0.5rem 0 0 0;
+  .post-content {
+    margin: 0.75rem 0 0 0;
     font-size: 0.95rem;
-    color: var(--color-muted);
-    line-height: 1.5;
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+
+  .post-content :global(p) {
+    margin: 0 0 0.75em 0;
+  }
+
+  .post-content :global(p:last-child) {
+    margin-bottom: 0;
   }
 
   .divider {
