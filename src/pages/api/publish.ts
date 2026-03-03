@@ -29,7 +29,6 @@ function buildMarkdown(data: { title: string; slug: string; description: string;
 title: "${safeTitle}"
 description: "${safeDescription}"
 date: "${date}"
-slug: "${data.slug}"
 draft: false
 ---
 
