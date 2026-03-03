@@ -9,14 +9,14 @@ En gång leder dig från promenadsträcket till stranden. Precis vid mynningen, 
 
 Deras stereo spelar Sacrifice med Elton John.
 
-It's a human sign
-When things go wrong
-When the scent of her lingers
+It's a human sign  
+When things go wrong  
+When the scent of her lingers  
 And temptation's strong
 
 Mannen ställer sig upp och gungar till musiken. Hans manlighet vajar i havsbrisen.
 
-Into the boundary
-Of each married man
-Sweet deceit comes calling
+Into the boundary  
+Of each married man  
+Sweet deceit comes calling  
 And negativity lands
