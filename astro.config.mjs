@@ -3,6 +3,6 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   output: 'hybrid',
-  adapter: vercel({ nodeVersion: '20' }),
+  adapter: vercel(),
   site: process.env.SITE_URL,
 });
