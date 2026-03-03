@@ -25,8 +25,8 @@ function buildMarkdown(data: { title: string; slug: string; description: string;
   const safeTitle = data.title.replace(/"/g, '\\"');
   const safeDescription = data.description.replace(/"/g, '\\"');
 
-  // Convert single newlines to double newlines so each line renders as its own paragraph
-  const body = data.content.trim().replace(/\n(?!\n)/g, '\n\n');
+  // Append two trailing spaces before each newline — markdown hard line break syntax
+  const body = data.content.trim().replace(/\n/g, '  \n');
 
   return `---
 title: "${safeTitle}"

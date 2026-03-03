@@ -19,7 +19,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <textarea
         id="transcribe-instructions"
         rows="3"
-      >Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out.</textarea>
+      >Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out. Preserve all line breaks exactly as they appear in the original text.</textarea>
     </div>
 
     <p class="hint">Upload one or more photos of handwritten text.</p>
@@ -504,7 +504,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     transcribeBtn.disabled = true;
     const instructions = transcribeInstructions.value.trim() ||
-      'Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out.';
+      'Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out. Preserve all line breaks exactly as they appear in the original text.';
 
     const results: string[] = [];
 
