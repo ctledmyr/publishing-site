@@ -221,6 +221,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   .preview-item {
+    position: relative;
+    cursor: grab;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -231,6 +233,31 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     max-width: 100px;
   }
 
+  .preview-item:active { cursor: grabbing; }
+
+  .preview-item.is-dragging { opacity: 0.4; }
+
+  .preview-item.drag-over-item > img {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .preview-number {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 3px 5px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
   .preview-item img {
     width: 100px;
     height: 80px;
@@ -239,7 +266,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     border: 1px solid var(--color-border);
   }
 
-  .preview-item span {
+  .preview-name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -419,6 +446,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       .replace(/-+/g, '-');
   }
 
+  function renumberItems() {
+    const items = previewList.querySelectorAll<HTMLDivElement>('.preview-item');
+    items.forEach((item, idx) => {
+      const badge = item.querySelector<HTMLSpanElement>('.preview-number');
+      if (badge) badge.textContent = String(idx + 1);
+    });
+  }
+
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
   // ─── File / Drop Zone ──────────────────────────────────────────────────────
@@ -442,14 +477,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     // Build preview thumbnails
     previewList.innerHTML = '';
-    valid.forEach(file => {
+    valid.forEach((file, idx) => {
       const item = document.createElement('div');
       item.className = 'preview-item';
+      item.draggable = true;
+      (item as any)._file = file;
+
+      const badge = document.createElement('span');
+      badge.className = 'preview-number';
+      badge.textContent = String(idx + 1);
+
       const img = document.createElement('img');
       img.src = URL.createObjectURL(file);
       img.alt = file.name;
+
       const name = document.createElement('span');
+      name.className = 'preview-name';
       name.textContent = file.name;
+
+      item.appendChild(badge);
       item.appendChild(img);
       item.appendChild(name);
       previewList.appendChild(item);
@@ -485,6 +531,61 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     transcribeBtn.disabled = true;
     fileInput.value = '';
     setStatus(transcribeStatus, '');
+  });
+
+  // ─── Drag-to-reorder thumbnails ────────────────────────────────────────────
+  let dragSrcItem: HTMLDivElement | null = null;
+
+  previewList.addEventListener('dragstart', (e) => {
+    const item = (e.target as HTMLElement).closest<HTMLDivElement>('.preview-item');
+    if (!item) return;
+    dragSrcItem = item;
+    item.classList.add('is-dragging');
+    e.dataTransfer!.effectAllowed = 'move';
+  });
+
+  previewList.addEventListener('dragend', () => {
+    previewList.querySelectorAll('.preview-item').forEach(el => {
+      el.classList.remove('is-dragging', 'drag-over-item');
+    });
+    dragSrcItem = null;
+  });
+
+  previewList.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer!.dropEffect = 'move';
+    const item = (e.target as HTMLElement).closest<HTMLDivElement>('.preview-item');
+    if (!item || item === dragSrcItem) return;
+    previewList.querySelectorAll('.preview-item').forEach(el => el.classList.remove('drag-over-item'));
+    item.classList.add('drag-over-item');
+  });
+
+  previewList.addEventListener('dragleave', (e) => {
+    const item = (e.target as HTMLElement).closest<HTMLDivElement>('.preview-item');
+    if (item) item.classList.remove('drag-over-item');
+  });
+
+  previewList.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const target = (e.target as HTMLElement).closest<HTMLDivElement>('.preview-item');
+    if (!target || !dragSrcItem || target === dragSrcItem) return;
+
+    const items = Array.from(previewList.children);
+    const srcIdx = items.indexOf(dragSrcItem);
+    const tgtIdx = items.indexOf(target);
+
+    if (srcIdx < tgtIdx) {
+      previewList.insertBefore(dragSrcItem, target.nextSibling);
+    } else {
+      previewList.insertBefore(dragSrcItem, target);
+    }
+
+    // Rebuild uploadedFiles to match new DOM order
+    uploadedFiles = Array.from(previewList.querySelectorAll<HTMLDivElement>('.preview-item'))
+      .map(el => (el as any)._file as File);
+
+    renumberItems();
+    previewList.querySelectorAll('.preview-item').forEach(el => el.classList.remove('drag-over-item'));
   });
 
   // ─── Auto-slug from title ──────────────────────────────────────────────────
