@@ -5,7 +5,7 @@ date: "2026-03-03"
 draft: false
 ---
 
-En gång leder dig från promenadsträcket till stranden. Precis vid mynningen, där stranden öppnar upp sig och havets oändlighet slår dig i ansiktet, ligger ett nudistpar. En solbränd välkomstkommitté vars ögon suger tag i dina och möter dig med ett leende som viskar ta av dig dina kläder och lägg dig vid min sida. Att det är det du innerst inne vill om du bara frigör dig från alla hämningar samhället har tvinget på dig. 
+En gång leder dig från promenadsträcket till stranden. Precis vid mynningen, där stranden öppnar upp sig och havets oändlighet slår dig i ansiktet, ligger ett nudistpar. En solbränd välkomstkommitté vars ögon suger tag i dina och möter dig med ett leende som viskar ta av dig dina kläder och lägg dig vid min sida. Att det är det du innerst inne vill om du bara frigör dig från alla hämningar samhället har tvingat på dig. 
 
 Deras stereo spelar Sacrifice med Elton John.
 
