@@ -106,7 +106,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
       <div class="email-field">
         <span class="email-label">Innehåll</span>
-        <span>Ett kort meddelande med inläggets titel och en "Läs inlägg"-knapp som länkar till URL:en. Skickas till alla aktiva prenumeranter.</span>
+        <span id="email-content-preview"></span>
       </div>
     </div>
 
@@ -420,6 +420,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const stageEmail = document.getElementById('stage-email') as HTMLElement;
   const emailSubject = document.getElementById('email-subject') as HTMLSpanElement;
   const emailPostUrl = document.getElementById('email-post-url') as HTMLAnchorElement;
+  const emailContentPreview = document.getElementById('email-content-preview') as HTMLSpanElement;
   const subscriberInfo = document.getElementById('subscriber-info') as HTMLParagraphElement;
   const sendEmailBtn = document.getElementById('send-email-btn') as HTMLButtonElement;
   const skipEmailBtn = document.getElementById('skip-email-btn') as HTMLButtonElement;
@@ -688,6 +689,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         emailSubject.textContent = `Nytt inlägg: ${title}`;
         emailPostUrl.textContent = result.url;
         emailPostUrl.href = result.url;
+        const previewText = content.replace(/\s+/g, ' ').trim();
+        emailContentPreview.textContent = previewText.length > 150
+          ? previewText.slice(0, 150) + '…'
+          : previewText;
         subscriberInfo.textContent = 'Utskicket meddelar alla aktiva prenumeranter med en länk till detta inlägg.';
       } else {
         setStatus(publishStatus, result.error || 'Publicering misslyckades. Försök igen.', 'error');
@@ -754,6 +759,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     postSlug.value = '';
     slugPreview.textContent = 'mitt-inlagg';
     postContent.value = '';
+    emailContentPreview.textContent = '';
     publishBtn.disabled = false;
 
     stageEmail.hidden = true;
