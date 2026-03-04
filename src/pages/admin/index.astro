@@ -3,33 +3,33 @@ export const prerender = false;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 // Middleware has already verified authentication before this page renders.
 ---
-<BaseLayout title="Admin Dashboard">
+<BaseLayout title="Adminpanel">
   <div class="admin-header">
-    <h1>Admin Dashboard</h1>
-    <a href="/admin/logout" class="logout-link">Log out</a>
+    <h1>Adminpanel</h1>
+    <a href="/admin/logout" class="logout-link">Logga ut</a>
   </div>
 
   <!-- ─── Stage 1: Upload & Transcribe ─────────────────────────────────── -->
   <section class="card" id="stage-upload">
-    <h2>1. Upload &amp; Transcribe</h2>
+    <h2>1. Ladda upp &amp; transkribera</h2>
 
     <!-- Transcription instructions -->
     <div class="field">
-      <label for="transcribe-instructions">Transcription instructions</label>
+      <label for="transcribe-instructions">Transkriptionsinstruktioner</label>
       <textarea
         id="transcribe-instructions"
         rows="3"
-      >Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out. Preserve all line breaks exactly as they appear in the original text.</textarea>
+      >Transkribera den handskrivna texten exakt. Ignorera och uteslut alla ord som är överkorsade. Bevara alla radbrytningar exakt som de ser ut i originaltexten.</textarea>
     </div>
 
-    <p class="hint">Upload one or more photos of handwritten text.</p>
+    <p class="hint">Ladda upp ett eller flera foton på handskriven text.</p>
 
     <div
       id="drop-zone"
       class="drop-zone"
       role="button"
       tabindex="0"
-      aria-label="Click or drag and drop images to upload"
+      aria-label="Klicka eller dra och släpp bilder för att ladda upp"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
            fill="none" stroke="currentColor" stroke-width="1.5"
@@ -38,21 +38,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <polyline points="17 8 12 3 7 8"/>
         <line x1="12" y1="3" x2="12" y2="15"/>
       </svg>
-      <p>Drag &amp; drop images here, or <span class="browse-text">click to browse</span></p>
-      <p class="file-hint">JPEG, PNG, WebP, or GIF &mdash; max 20 MB each &mdash; multiple files allowed</p>
+      <p>Dra och släpp bilder här, eller <span class="browse-text">klicka för att bläddra</span></p>
+      <p class="file-hint">JPEG, PNG, WebP eller GIF &mdash; max 20 MB vardera &mdash; flera filer tillåtna</p>
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
     </div>
 
     <div id="preview-container" class="preview-container hidden">
       <div id="preview-list" class="preview-list"></div>
       <button id="clear-image-btn" class="btn btn-ghost btn-sm" type="button">
-        Remove all images
+        Ta bort alla bilder
       </button>
     </div>
 
     <div class="action-row">
       <button id="transcribe-btn" class="btn btn-primary" type="button" disabled>
-        Transcribe with Claude
+        Transkribera med Claude
       </button>
       <span id="transcribe-status" class="status-text" aria-live="polite"></span>
     </div>
@@ -60,36 +60,36 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   <!-- ─── Stage 2: Edit & Publish ──────────────────────────────────────── -->
   <section class="card" id="stage-content">
-    <h2>2. Edit &amp; Publish</h2>
+    <h2>2. Redigera &amp; publicera</h2>
 
     <div class="field">
-      <label for="post-title">Title <span class="required">*</span></label>
-      <input type="text" id="post-title" placeholder="My Post Title" autocomplete="off" />
+      <label for="post-title">Titel <span class="required">*</span></label>
+      <input type="text" id="post-title" placeholder="Min inläggsrubrik" autocomplete="off" />
     </div>
 
     <div class="field">
       <label for="post-slug">Slug <span class="required">*</span></label>
-      <input type="text" id="post-slug" placeholder="my-post-title" autocomplete="off" />
-      <span class="field-hint">Auto-generated from title. URL: /posts/<em id="slug-preview">my-post-title</em></span>
+      <input type="text" id="post-slug" placeholder="mitt-inlagg" autocomplete="off" />
+      <span class="field-hint">Autogenererad från titeln. URL: /posts/<em id="slug-preview">mitt-inlagg</em></span>
     </div>
 
     <div class="field">
-      <label for="post-description">Description <span class="required">*</span></label>
-      <input type="text" id="post-description" placeholder="Brief description for the post listing" autocomplete="off" />
+      <label for="post-description">Beskrivning <span class="required">*</span></label>
+      <input type="text" id="post-description" placeholder="Kort beskrivning för inläggslistan" autocomplete="off" />
     </div>
 
     <div class="field">
-      <label for="post-content">Content <span class="required">*</span></label>
+      <label for="post-content">Innehåll <span class="required">*</span></label>
       <textarea
         id="post-content"
         rows="20"
-        placeholder="Transcribed or manually written content will appear here..."
+        placeholder="Transkriberat eller manuellt skrivet innehåll visas här..."
       ></textarea>
     </div>
 
     <div class="action-row">
       <button id="publish-btn" class="btn btn-primary" type="button">
-        Publish Post
+        Publicera inlägg
       </button>
       <span id="publish-status" class="status-text" aria-live="polite"></span>
     </div>
@@ -97,21 +97,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   <!-- ─── Stage 3: Email Subscribers ──────────────────────────────────── -->
   <section class="card" id="stage-email" hidden>
-    <h2>3. Notify Subscribers</h2>
-    <p class="hint">Review the email below before sending it to all active subscribers.</p>
+    <h2>3. Meddela prenumeranter</h2>
+    <p class="hint">Granska e-postmeddelandet nedan innan du skickar det till alla aktiva prenumeranter.</p>
 
     <div id="email-preview-box" class="email-preview">
       <div class="email-field">
-        <span class="email-label">Subject</span>
+        <span class="email-label">Ämne</span>
         <span id="email-subject"></span>
       </div>
       <div class="email-field">
-        <span class="email-label">Post URL</span>
+        <span class="email-label">Inläggets URL</span>
         <a id="email-post-url" href="#" target="_blank" rel="noopener noreferrer"></a>
       </div>
       <div class="email-field">
-        <span class="email-label">Body</span>
-        <span>A short notification with the post title and a "Read Post" button linking to the post URL. Sent to all active subscribers.</span>
+        <span class="email-label">Innehåll</span>
+        <span>Ett kort meddelande med inläggets titel och en "Läs inlägg"-knapp som länkar till URL:en. Skickas till alla aktiva prenumeranter.</span>
       </div>
     </div>
 
@@ -119,17 +119,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     <div class="action-row">
       <button id="send-email-btn" class="btn btn-primary" type="button">
-        Send to Subscribers
+        Skicka till prenumeranter
       </button>
       <button id="skip-email-btn" class="btn btn-ghost" type="button">
-        Skip (don&apos;t send)
+        Hoppa över (skicka inte)
       </button>
       <span id="email-status" class="status-text" aria-live="polite"></span>
     </div>
 
     <div id="done-message" class="done-message hidden">
-      <p>All done! Your post is published and subscribers have been notified.</p>
-      <button id="new-post-btn" class="btn btn-primary" type="button">Start a New Post</button>
+      <p>Klart! Ditt inlägg är publicerat och prenumeranterna har meddelats.</p>
+      <button id="new-post-btn" class="btn btn-primary" type="button">Starta ett nytt inlägg</button>
     </div>
   </section>
 </BaseLayout>
@@ -426,11 +426,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const arr = Array.from(files);
     const valid = arr.filter(f => {
       if (!ALLOWED_TYPES.includes(f.type)) {
-        setStatus(transcribeStatus, `"${f.name}" is not a supported image type.`, 'error');
+        setStatus(transcribeStatus, `"${f.name}" är inte ett bildformat som stöds.`, 'error');
         return false;
       }
       if (f.size > 20 * 1024 * 1024) {
-        setStatus(transcribeStatus, `"${f.name}" exceeds 20 MB.`, 'error');
+        setStatus(transcribeStatus, `"${f.name}" överstiger 20 MB.`, 'error');
         return false;
       }
       return true;
@@ -457,7 +457,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     previewContainer.classList.remove('hidden');
     transcribeBtn.disabled = false;
-    setStatus(transcribeStatus, `${valid.length} image${valid.length > 1 ? 's' : ''} ready.`);
+    setStatus(transcribeStatus, `${valid.length} bild${valid.length > 1 ? 'er' : ''} redo.`);
   }
 
   dropZone.addEventListener('click', () => fileInput.click());
@@ -491,11 +491,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   postTitle.addEventListener('input', () => {
     const slug = toSlug(postTitle.value);
     postSlug.value = slug;
-    slugPreview.textContent = slug || 'my-post-title';
+    slugPreview.textContent = slug || 'mitt-inlagg';
   });
 
   postSlug.addEventListener('input', () => {
-    slugPreview.textContent = postSlug.value || 'my-post-title';
+    slugPreview.textContent = postSlug.value || 'mitt-inlagg';
   });
 
   // ─── Transcribe (sequential, one image at a time) ─────────────────────────
@@ -504,7 +504,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     transcribeBtn.disabled = true;
     const instructions = transcribeInstructions.value.trim() ||
-      'Transcribe the handwritten text exactly. Ignore and exclude any words that are crossed out. Preserve all line breaks exactly as they appear in the original text.';
+      'Transkribera den handskrivna texten exakt. Ignorera och uteslut alla ord som är överkorsade. Bevara alla radbrytningar exakt som de ser ut i originaltexten.';
 
     const results: string[] = [];
 
@@ -513,8 +513,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       setStatus(
         transcribeStatus,
         uploadedFiles.length > 1
-          ? `Transcribing image ${i + 1} of ${uploadedFiles.length}…`
-          : 'Transcribing… this may take up to 30 seconds.'
+          ? `Transkriberar bild ${i + 1} av ${uploadedFiles.length}…`
+          : 'Transkriberar… detta kan ta upp till 30 sekunder.'
       );
 
       const formData = new FormData();
@@ -528,12 +528,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         if (res.ok && result.text) {
           results.push(result.text);
         } else {
-          setStatus(transcribeStatus, `Image ${i + 1}: ${result.error || 'Transcription failed.'}`, 'error');
+          setStatus(transcribeStatus, `Bild ${i + 1}: ${result.error || 'Transkription misslyckades.'}`, 'error');
           transcribeBtn.disabled = false;
           return;
         }
       } catch {
-        setStatus(transcribeStatus, `Network error on image ${i + 1}. Please try again.`, 'error');
+        setStatus(transcribeStatus, `Nätverksfel för bild ${i + 1}. Försök igen.`, 'error');
         transcribeBtn.disabled = false;
         return;
       }
@@ -544,8 +544,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     setStatus(
       transcribeStatus,
       results.length > 1
-        ? `${results.length} images transcribed. Review and edit the content below.`
-        : 'Transcription complete. Edit the content below.',
+        ? `${results.length} bilder transkriberade. Granska och redigera innehållet nedan.`
+        : 'Transkription klar. Redigera innehållet nedan.',
       'success'
     );
     transcribeBtn.disabled = false;
@@ -559,12 +559,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const content = postContent.value.trim();
 
     if (!title || !slug || !description || !content) {
-      setStatus(publishStatus, 'Please fill in all required fields.', 'error');
+      setStatus(publishStatus, 'Fyll i alla obligatoriska fält.', 'error');
       return;
     }
 
     publishBtn.disabled = true;
-    setStatus(publishStatus, 'Publishing to GitHub…');
+    setStatus(publishStatus, 'Publicerar till GitHub…');
 
     try {
       const res = await fetch('/api/publish', {
@@ -581,23 +581,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
         setStatus(
           publishStatus,
-          `Published! Your post will be live at ${result.url} once the site rebuilds (~2 min).`,
+          `Publicerat! Ditt inlägg kommer att vara tillgängligt på ${result.url} när sajten byggs om (~2 min).`,
           'success'
         );
 
         stageEmail.hidden = false;
         stageEmail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        emailSubject.textContent = `New Post: ${title}`;
+        emailSubject.textContent = `Nytt inlägg: ${title}`;
         emailPostUrl.textContent = result.url;
         emailPostUrl.href = result.url;
-        subscriberInfo.textContent = 'Sending will notify all active subscribers with a link to this post.';
+        subscriberInfo.textContent = 'Utskicket meddelar alla aktiva prenumeranter med en länk till detta inlägg.';
       } else {
-        setStatus(publishStatus, result.error || 'Publish failed. Please try again.', 'error');
+        setStatus(publishStatus, result.error || 'Publicering misslyckades. Försök igen.', 'error');
         publishBtn.disabled = false;
       }
     } catch {
-      setStatus(publishStatus, 'Network error. Please try again.', 'error');
+      setStatus(publishStatus, 'Nätverksfel. Försök igen.', 'error');
       publishBtn.disabled = false;
     }
   });
@@ -608,7 +608,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     sendEmailBtn.disabled = true;
     skipEmailBtn.disabled = true;
-    setStatus(emailStatus, 'Sending…');
+    setStatus(emailStatus, 'Skickar…');
 
     try {
       const res = await fetch('/api/send-email', {
@@ -620,24 +620,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
       if (res.ok) {
         const msg = result.sent === 0
-          ? 'No active subscribers to notify.'
-          : `Sent to ${result.sent} subscriber${result.sent === 1 ? '' : 's'}.`;
+          ? 'Inga aktiva prenumeranter att meddela.'
+          : `Skickat till ${result.sent} prenumerant${result.sent === 1 ? '' : 'er'}.`;
         setStatus(emailStatus, msg, 'success');
         doneMessage.classList.remove('hidden');
       } else {
-        setStatus(emailStatus, result.error || 'Send failed. Please try again.', 'error');
+        setStatus(emailStatus, result.error || 'Utskick misslyckades. Försök igen.', 'error');
         sendEmailBtn.disabled = false;
         skipEmailBtn.disabled = false;
       }
     } catch {
-      setStatus(emailStatus, 'Network error. Please try again.', 'error');
+      setStatus(emailStatus, 'Nätverksfel. Försök igen.', 'error');
       sendEmailBtn.disabled = false;
       skipEmailBtn.disabled = false;
     }
   });
 
   skipEmailBtn.addEventListener('click', () => {
-    setStatus(emailStatus, 'Skipped email send.', 'idle');
+    setStatus(emailStatus, 'E-postutskick hoppades över.', 'idle');
     doneMessage.classList.remove('hidden');
   });
 
@@ -655,7 +655,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     postTitle.value = '';
     postSlug.value = '';
-    slugPreview.textContent = 'my-post-title';
+    slugPreview.textContent = 'mitt-inlagg';
     postDescription.value = '';
     postContent.value = '';
     publishBtn.disabled = false;

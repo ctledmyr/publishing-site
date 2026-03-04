@@ -11,10 +11,10 @@ const renderedPosts = await Promise.all(
 ---
 <BaseLayout title="Things Written" description="A handwritten publishing journal.">
   <section class="posts-section">
-    <h1>Posts</h1>
+    <h1>Inlägg</h1>
 
     {renderedPosts.length === 0 ? (
-      <p class="empty-state">No posts yet. Check back soon.</p>
+      <p class="empty-state">Inga inlägg ännu. Kom tillbaka snart.</p>
     ) : (
       <ul class="post-list">
         {renderedPosts.map(({ post, Content }) => (
@@ -25,7 +25,7 @@ const renderedPosts = await Promise.all(
                 datetime={post.data.date.toISOString()}
                 class="post-date"
               >
-                {post.data.date.toLocaleDateString('en-US', {
+                {post.data.date.toLocaleDateString('sv-SE', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
@@ -44,8 +44,8 @@ const renderedPosts = await Promise.all(
   <hr class="divider" />
 
   <section id="subscribe" class="subscribe-section">
-    <h2>Subscribe</h2>
-    <p>Get new posts delivered straight to your inbox.</p>
+    <h2>Prenumerera</h2>
+    <p>Få nya inlägg direkt i din inkorg.</p>
 
     <form id="subscribe-form" class="subscribe-form" novalidate>
       <div class="form-row">
@@ -53,11 +53,11 @@ const renderedPosts = await Promise.all(
           type="email"
           id="subscribe-email"
           name="email"
-          placeholder="you@example.com"
+          placeholder="du@exempel.se"
           required
           autocomplete="email"
         />
-        <button type="submit">Subscribe</button>
+        <button type="submit">Prenumerera</button>
       </div>
       <p id="subscribe-message" class="form-message" aria-live="polite"></p>
     </form>
@@ -225,7 +225,7 @@ const renderedPosts = await Promise.all(
     if (!email) return;
 
     submitBtn.disabled = true;
-    message.textContent = 'Subscribing...';
+    message.textContent = 'Prenumererar...';
     message.className = 'form-message';
 
     try {
@@ -238,18 +238,18 @@ const renderedPosts = await Promise.all(
       const result = await res.json();
 
       if (res.ok) {
-        message.textContent = 'Subscribed! Thank you.';
+        message.textContent = 'Prenumererad! Tack.';
         message.className = 'form-message success';
         emailInput.value = '';
       } else if (res.status === 409) {
-        message.textContent = 'You\'re already subscribed.';
+        message.textContent = 'Du är redan prenumerant.';
         message.className = 'form-message error';
       } else {
-        message.textContent = result.error || 'Something went wrong. Please try again.';
+        message.textContent = result.error || 'Något gick fel. Försök igen.';
         message.className = 'form-message error';
       }
     } catch {
-      message.textContent = 'Network error. Please try again.';
+      message.textContent = 'Nätverksfel. Försök igen.';
       message.className = 'form-message error';
     } finally {
       submitBtn.disabled = false;

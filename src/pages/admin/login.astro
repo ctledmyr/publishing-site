@@ -24,20 +24,20 @@ if (Astro.request.method === 'POST') {
 
     return Astro.redirect('/admin');
   } else {
-    error = 'Incorrect password.';
+    error = 'Felaktigt lösenord.';
   }
 }
 ---
-<BaseLayout title="Admin Login">
+<BaseLayout title="Adminpanel">
   <div class="login-wrapper">
-    <h1>Admin Login</h1>
+    <h1>Adminpanel</h1>
 
     {error && (
       <p class="error-message" role="alert">{error}</p>
     )}
 
     <form method="POST" class="login-form">
-      <label for="password">Password</label>
+      <label for="password">Lösenord</label>
       <input
         type="password"
         id="password"
@@ -46,7 +46,7 @@ if (Astro.request.method === 'POST') {
         autofocus
         autocomplete="current-password"
       />
-      <button type="submit">Log In</button>
+      <button type="submit">Logga in</button>
     </form>
   </div>
 </BaseLayout>

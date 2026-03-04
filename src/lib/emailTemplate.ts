@@ -38,7 +38,7 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
   const safeURL = escapeHTML(postURL);
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,7 +60,7 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
             <td style="background-color: #111111; padding: 24px 40px;">
               <p style="margin: 0; font-family: Arial, sans-serif; font-size: 14px;
                         color: #ffffff; letter-spacing: 0.1em; text-transform: uppercase;">
-                New Post
+                Nytt inlägg
               </p>
             </td>
           </tr>
@@ -74,7 +74,7 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
               </h1>
               ${postContent
                 ? `<div style="margin: 0 0 32px 0;">${contentToHTML(postContent)}</div>`
-                : `<p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.7; color: #555555;">A new post has been published. Click the button below to read it.</p>`
+                : `<p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.7; color: #555555;">Ett nytt inlägg har publicerats. Klicka på knappen nedan för att läsa det.</p>`
               }
               <!-- CTA Button -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0">
@@ -85,14 +85,14 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
                               font-family: Arial, sans-serif; font-size: 15px;
                               color: #ffffff; text-decoration: none;
                               border-radius: 4px; font-weight: bold;">
-                      Read Post &rarr;
+                      Läs inlägg &rarr;
                     </a>
                   </td>
                 </tr>
               </table>
               <!-- Fallback link -->
               <p style="margin: 20px 0 0 0; font-size: 13px; color: #999999;">
-                Or copy this link into your browser:<br>
+                Eller kopiera den här länken till din webbläsare:<br>
                 <a href="${safeURL}" style="color: #555555;">${safeURL}</a>
               </p>
             </td>
@@ -104,7 +104,7 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
                        border-top: 1px solid #eeeeee;">
               <p style="margin: 0; font-family: Arial, sans-serif; font-size: 12px;
                         color: #aaaaaa; line-height: 1.6;">
-                You're receiving this because you subscribed${siteURL ? ` at <a href="${escapeHTML(siteURL)}" style="color: #aaaaaa;">${escapeHTML(siteURL)}</a>` : ''}.
+                Du får det här e-postmeddelandet eftersom du prenumererar${siteURL ? ` på <a href="${escapeHTML(siteURL)}" style="color: #aaaaaa;">${escapeHTML(siteURL)}</a>` : ''}.
               </p>
             </td>
           </tr>
