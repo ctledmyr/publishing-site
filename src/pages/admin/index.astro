@@ -230,7 +230,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-family: var(--font-sans);
     font-size: 0.75rem;
     color: var(--color-muted);
-    max-width: 100px;
+    width: 120px;
+    max-width: 120px;
   }
 
   .preview-item:active { cursor: grabbing; }
@@ -259,8 +260,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   .preview-item img {
-    width: 100px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
+    max-width: 120px;
     object-fit: cover;
     border-radius: 4px;
     border: 1px solid var(--color-border);
@@ -270,7 +272,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
+    max-width: 120px;
   }
 
   /* Form Fields */
@@ -490,6 +492,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const img = document.createElement('img');
       img.src = URL.createObjectURL(file);
       img.alt = file.name;
+      img.style.cssText = 'width:120px;height:120px;max-width:120px;object-fit:cover;border-radius:4px;border:1px solid #e0e0e0;display:block;flex-shrink:0;';
 
       const name = document.createElement('span');
       name.className = 'preview-name';
