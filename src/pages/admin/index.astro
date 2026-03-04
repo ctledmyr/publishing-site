@@ -113,6 +113,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <p id="subscriber-info" class="hint"></p>
 
     <div class="action-row">
+      <button id="test-email-btn" class="btn btn-ghost" type="button">
+        Skicka testmejl
+      </button>
+      <span id="test-email-status" class="status-text" aria-live="polite"></span>
+    </div>
+
+    <div class="action-row">
       <button id="send-email-btn" class="btn btn-primary" type="button">
         Skicka till prenumeranter
       </button>
@@ -422,6 +429,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const emailPostUrl = document.getElementById('email-post-url') as HTMLAnchorElement;
   const emailContentPreview = document.getElementById('email-content-preview') as HTMLSpanElement;
   const subscriberInfo = document.getElementById('subscriber-info') as HTMLParagraphElement;
+  const testEmailBtn = document.getElementById('test-email-btn') as HTMLButtonElement;
+  const testEmailStatus = document.getElementById('test-email-status') as HTMLSpanElement;
   const sendEmailBtn = document.getElementById('send-email-btn') as HTMLButtonElement;
   const skipEmailBtn = document.getElementById('skip-email-btn') as HTMLButtonElement;
   const emailStatus = document.getElementById('email-status') as HTMLSpanElement;
@@ -704,6 +713,31 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
   });
 
+  // ─── Send Test Email ───────────────────────────────────────────────────────
+  testEmailBtn.addEventListener('click', async () => {
+    testEmailBtn.disabled = true;
+    setStatus(testEmailStatus, 'Skickar testmejl…');
+
+    try {
+      const res = await fetch('/api/send-test-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postTitle: publishedPostTitle, postURL: publishedPostURL, postContent: publishedPostContent }),
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        setStatus(testEmailStatus, `Testmejl skickat till ${result.to}.`, 'success');
+      } else {
+        setStatus(testEmailStatus, result.error || 'Kunde inte skicka testmejl.', 'error');
+      }
+    } catch {
+      setStatus(testEmailStatus, 'Nätverksfel. Försök igen.', 'error');
+    } finally {
+      testEmailBtn.disabled = false;
+    }
+  });
+
   // ─── Send Email ────────────────────────────────────────────────────────────
   sendEmailBtn.addEventListener('click', async () => {
     if (!publishedPostURL) return;
@@ -767,7 +801,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     sendEmailBtn.disabled = false;
     skipEmailBtn.disabled = false;
 
-    [transcribeStatus, publishStatus, emailStatus].forEach(el => setStatus(el, ''));
+    [transcribeStatus, publishStatus, testEmailStatus, emailStatus].forEach(el => setStatus(el, ''));
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
