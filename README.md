@@ -1,4 +1,4 @@
-# Publishing Site
+# Things Written
 
 A minimal publishing platform where you photograph handwritten text, have it transcribed by Claude's vision AI, edit it, and publish it as a post. Subscribers are notified by email.
 

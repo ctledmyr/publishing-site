@@ -9,7 +9,7 @@ const renderedPosts = await Promise.all(
   posts.map(async (post) => ({ post, Content: (await post.render()).Content }))
 );
 ---
-<BaseLayout title="Publishing Site" description="A handwritten publishing site.">
+<BaseLayout title="Things Written" description="A handwritten publishing journal.">
   <section class="posts-section">
     <h1>Posts</h1>
 
