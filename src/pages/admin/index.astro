@@ -19,7 +19,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <textarea
         id="transcribe-instructions"
         rows="3"
-      >Transkribera den handskrivna texten exakt. Ignorera och uteslut alla ord som är överkorsade. Bevara alla radbrytningar exakt som de ser ut i originaltexten.</textarea>
+      >Transkribera den handskrivna texten exakt. Ignorera och uteslut alla ord som är överstrukna. Slå ihop rader som hör till samma stycke till ett sammanhängande stycke — börja bara ett nytt stycke när det finns ett tydligt radbrytning eller ny mening i originaltexten. Bevara rubriker om sådana finns.</textarea>
     </div>
 
     <p class="hint">Ladda upp ett eller flera foton på handskriven text.</p>
@@ -71,11 +71,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <label for="post-slug">Slug <span class="required">*</span></label>
       <input type="text" id="post-slug" placeholder="mitt-inlagg" autocomplete="off" />
       <span class="field-hint">Autogenererad från titeln. URL: /posts/<em id="slug-preview">mitt-inlagg</em></span>
-    </div>
-
-    <div class="field">
-      <label for="post-description">Beskrivning <span class="required">*</span></label>
-      <input type="text" id="post-description" placeholder="Kort beskrivning för inläggslistan" autocomplete="off" />
     </div>
 
     <div class="field">
@@ -418,7 +413,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const postTitle = document.getElementById('post-title') as HTMLInputElement;
   const postSlug = document.getElementById('post-slug') as HTMLInputElement;
   const slugPreview = document.getElementById('slug-preview') as HTMLElement;
-  const postDescription = document.getElementById('post-description') as HTMLInputElement;
   const postContent = document.getElementById('post-content') as HTMLTextAreaElement;
   const publishBtn = document.getElementById('publish-btn') as HTMLButtonElement;
   const publishStatus = document.getElementById('publish-status') as HTMLSpanElement;
@@ -608,7 +602,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     transcribeBtn.disabled = true;
     const instructions = transcribeInstructions.value.trim() ||
-      'Transkribera den handskrivna texten exakt. Ignorera och uteslut alla ord som är överkorsade. Bevara alla radbrytningar exakt som de ser ut i originaltexten.';
+      'Transkribera den handskrivna texten exakt. Ignorera och uteslut alla ord som är överstrukna. Slå ihop rader som hör till samma stycke till ett sammanhängande stycke — börja bara ett nytt stycke när det finns ett tydligt radbrytning eller ny mening i originaltexten. Bevara rubriker om sådana finns.';
 
     const results: string[] = [];
 
@@ -659,10 +653,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   publishBtn.addEventListener('click', async () => {
     const title = postTitle.value.trim();
     const slug = postSlug.value.trim();
-    const description = postDescription.value.trim();
     const content = postContent.value.trim();
 
-    if (!title || !slug || !description || !content) {
+    if (!title || !slug || !content) {
       setStatus(publishStatus, 'Fyll i alla obligatoriska fält.', 'error');
       return;
     }
@@ -674,7 +667,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const res = await fetch('/api/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, slug, description, content }),
+        body: JSON.stringify({ title, slug, content }),
       });
       const result = await res.json();
 
@@ -760,7 +753,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     postTitle.value = '';
     postSlug.value = '';
     slugPreview.textContent = 'mitt-inlagg';
-    postDescription.value = '';
     postContent.value = '';
     publishBtn.disabled = false;
 

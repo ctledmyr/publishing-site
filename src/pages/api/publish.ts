@@ -5,7 +5,6 @@ export const prerender = false;
 interface PublishBody {
   title: string;
   slug: string;
-  description: string;
   content: string;
 }
 
@@ -19,18 +18,16 @@ function sanitizeSlug(slug: string): string {
 }
 
 /** Build the markdown file content with YAML frontmatter. */
-function buildMarkdown(data: { title: string; slug: string; description: string; content: string }): string {
+function buildMarkdown(data: { title: string; slug: string; content: string }): string {
   const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   // Escape double-quotes in strings that go into quoted YAML scalars
   const safeTitle = data.title.replace(/"/g, '\\"');
-  const safeDescription = data.description.replace(/"/g, '\\"');
 
   // Append two trailing spaces before each newline — markdown hard line break syntax
   const body = data.content.trim().replace(/\n/g, '  \n');
 
   return `---
 title: "${safeTitle}"
-description: "${safeDescription}"
 date: "${date}"
 draft: false
 ---
@@ -64,10 +61,10 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'Expected JSON body.' }, 400);
   }
 
-  const { title, slug, description, content } = body;
+  const { title, slug, content } = body;
 
-  if (!title?.trim() || !slug?.trim() || !description?.trim() || !content?.trim()) {
-    return json({ error: 'title, slug, description, and content are all required.' }, 400);
+  if (!title?.trim() || !slug?.trim() || !content?.trim()) {
+    return json({ error: 'title, slug, and content are all required.' }, 400);
   }
 
   const safeSlug = sanitizeSlug(slug);
@@ -84,7 +81,7 @@ export const POST: APIRoute = async ({ request }) => {
   } = import.meta.env;
 
   const filePath = `src/content/posts/${safeSlug}.md`;
-  const markdownContent = buildMarkdown({ title, slug: safeSlug, description, content });
+  const markdownContent = buildMarkdown({ title, slug: safeSlug, content });
   const contentBase64 = Buffer.from(markdownContent, 'utf-8').toString('base64');
 
   const githubHeaders: Record<string, string> = {
