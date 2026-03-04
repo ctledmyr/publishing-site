@@ -3,6 +3,7 @@ interface EmailTemplateData {
   postURL: string;
   siteURL?: string;
   postContent?: string;
+  unsubscribeURL: string;
 }
 
 /**
@@ -33,7 +34,7 @@ function contentToHTML(text: string): string {
     .join('\n');
 }
 
-export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: EmailTemplateData): string {
+export function generateEmailHTML({ postTitle, postURL, siteURL, postContent, unsubscribeURL }: EmailTemplateData): string {
   const safeTitle = escapeHTML(postTitle);
   const safeURL = escapeHTML(postURL);
 
@@ -60,7 +61,7 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
             <td style="background-color: #111111; padding: 24px 40px;">
               <p style="margin: 0; font-family: Arial, sans-serif; font-size: 14px;
                         color: #ffffff; letter-spacing: 0.1em; text-transform: uppercase;">
-                Nytt inlägg
+                Things Written
               </p>
             </td>
           </tr>
@@ -85,16 +86,11 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
                               font-family: Arial, sans-serif; font-size: 15px;
                               color: #ffffff; text-decoration: none;
                               border-radius: 4px; font-weight: bold;">
-                      Läs inlägg &rarr;
+                      Läs online
                     </a>
                   </td>
                 </tr>
               </table>
-              <!-- Fallback link -->
-              <p style="margin: 20px 0 0 0; font-size: 13px; color: #999999;">
-                Eller kopiera den här länken till din webbläsare:<br>
-                <a href="${safeURL}" style="color: #555555;">${safeURL}</a>
-              </p>
             </td>
           </tr>
 
@@ -105,6 +101,10 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent }: 
               <p style="margin: 0; font-family: Arial, sans-serif; font-size: 12px;
                         color: #aaaaaa; line-height: 1.6;">
                 Du får det här e-postmeddelandet eftersom du prenumererar${siteURL ? ` på <a href="${escapeHTML(siteURL)}" style="color: #aaaaaa;">${escapeHTML(siteURL)}</a>` : ''}.
+              </p>
+              <p style="margin: 8px 0 0 0; font-family: Arial, sans-serif; font-size: 12px;
+                        color: #aaaaaa; line-height: 1.6;">
+                <a href="${escapeHTML(unsubscribeURL)}" style="color: #aaaaaa;">Avsluta prenumeration</a>
               </p>
             </td>
           </tr>

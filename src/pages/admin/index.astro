@@ -686,7 +686,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         stageEmail.hidden = false;
         stageEmail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        emailSubject.textContent = `Nytt inlägg: ${title}`;
+        emailSubject.textContent = `Things Written - ${title}`;
         emailPostUrl.textContent = result.url;
         emailPostUrl.href = result.url;
         const previewText = content.replace(/\s+/g, ' ').trim();
