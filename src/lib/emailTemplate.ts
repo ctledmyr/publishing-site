@@ -69,11 +69,13 @@ export function generateWelcomeEmailHTML({ siteURL, unsubscribeURL }: { siteURL?
           <!-- Body -->
           <tr>
             <td style="padding: 40px;">
-              <h1 style="margin: 0 0 20px 0; font-size: 26px; line-height: 1.3;
-                         color: #111111; font-weight: normal;">
-                Välkommen!
-              </h1>
-              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Kul att du är här! Här <a href="https://www.thingswritten.se/posts/vr-i-barcelona" style="color: #333333; text-decoration: underline;">dansar naken på en strand</a>, här är <a href="https://www.thingswritten.se/posts/i-flygstolen" style="color: #333333; text-decoration: underline;">en psykopat</a>, och här har någon <a href="https://www.thingswritten.se/posts/ur-led-r-tiden" style="color: #333333; text-decoration: underline;">hittat någon att prata med</a>. Du kommer att få ett mejl varje gång något nytt publiceras.</p>
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Hall&aring; d&auml;r,</p>
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Ibland ser man saker d&auml;r ute. Det kan vara en man som <a href="https://www.thingswritten.se/posts/vr-i-barcelona" style="color: #333333; text-decoration: underline;">dansar naken p&aring; en strand</a>, eller <a href="https://www.thingswritten.se/posts/i-flygstolen" style="color: #333333; text-decoration: underline;">en psykopat</a>, eller en herre som misstar sig n&auml;r han tror att han har <a href="https://www.thingswritten.se/posts/ur-led-r-tiden" style="color: #333333; text-decoration: underline;">hittat n&aring;gon att prata med</a>.</p>
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">V&auml;rdsliga ting, men som man fr&aring;n tid till annan av n&aring;gon anledning vill h&auml;nga kvar vid. H&auml;nga kvar en stund innan det &auml;r dags att g&aring; vidare.</p>
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Och nu n&auml;r det h&auml;nder mig och jag lyckas f&aring; ner det p&aring; papper dyker det upp din inbox.</p>
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Tack f&ouml;r att du vill vara med att l&auml;sa, hoppas att du gillar det!</p>
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">/CT</p>
+              <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.7; color: #777777; font-style: italic;">PS. N&auml;r mina texter k&auml;nns mer som spam &auml;n l&auml;sgl&auml;dje, finns det nog en knapp n&aring;gonstans f&ouml;r att bli av med mig. Men den f&aring;r du hitta sj&auml;lv.</p>
               <!-- CTA Button -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                 <tr>
