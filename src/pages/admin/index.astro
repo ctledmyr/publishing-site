@@ -134,6 +134,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <button id="new-post-btn" class="btn btn-primary" type="button">Starta ett nytt inlägg</button>
     </div>
   </section>
+
+  <!-- ─── Utility: Test Welcome Email ──────────────────────────────────── -->
+  <section class="card">
+    <h2>Testa välkomstmejl</h2>
+    <p class="hint">Skickar välkomstmejlet till din testadress för att kontrollera utseendet.</p>
+    <div class="action-row">
+      <button id="test-welcome-btn" class="btn btn-ghost" type="button">
+        Testa välkomstmejl
+      </button>
+      <span id="test-welcome-status" class="status-text" aria-live="polite"></span>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
@@ -436,6 +448,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const emailStatus = document.getElementById('email-status') as HTMLSpanElement;
   const doneMessage = document.getElementById('done-message') as HTMLDivElement;
   const newPostBtn = document.getElementById('new-post-btn') as HTMLButtonElement;
+  const testWelcomeBtn = document.getElementById('test-welcome-btn') as HTMLButtonElement;
+  const testWelcomeStatus = document.getElementById('test-welcome-status') as HTMLSpanElement;
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
   function setStatus(el: HTMLSpanElement, text: string, type: 'idle' | 'error' | 'success' = 'idle') {
@@ -695,7 +709,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         stageEmail.hidden = false;
         stageEmail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        emailSubject.textContent = `Things Written - ${title}`;
+        emailSubject.textContent = title;
         emailPostUrl.textContent = result.url;
         emailPostUrl.href = result.url;
         const previewText = content.replace(/\s+/g, ' ').trim();
@@ -804,5 +818,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     [transcribeStatus, publishStatus, testEmailStatus, emailStatus].forEach(el => setStatus(el, ''));
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ─── Test Welcome Email ─────────────────────────────────────────────────
+  testWelcomeBtn.addEventListener('click', async () => {
+    testWelcomeBtn.disabled = true;
+    setStatus(testWelcomeStatus, 'Skickar välkomstmejl…');
+
+    try {
+      const res = await fetch('/api/send-test-welcome', { method: 'POST' });
+      const result = await res.json();
+
+      if (res.ok) {
+        setStatus(testWelcomeStatus, `Välkomstmejl skickat till ${result.to}.`, 'success');
+      } else {
+        setStatus(testWelcomeStatus, result.error || 'Kunde inte skicka välkomstmejl.', 'error');
+      }
+    } catch {
+      setStatus(testWelcomeStatus, 'Nätverksfel. Försök igen.', 'error');
+    } finally {
+      testWelcomeBtn.disabled = false;
+    }
   });
 </script>
