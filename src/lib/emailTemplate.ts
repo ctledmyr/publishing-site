@@ -73,23 +73,21 @@ export function generateWelcomeEmailHTML({ siteURL, unsubscribeURL }: { siteURL?
                          color: #111111; font-weight: normal;">
                 Välkommen!
               </h1>
-              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Kul att du är här! Du kommer nu att få ett mejl varje gång något nytt publiceras på Things Written.</p>
-              ${siteURL
-                ? `<!-- CTA Button -->
+              <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Kul att du är här! Här <a href="https://www.thingswritten.se/posts/vr-i-barcelona" style="color: #333333; text-decoration: underline;">dansar naken på en strand</a>, här är <a href="https://www.thingswritten.se/posts/i-flygstolen" style="color: #333333; text-decoration: underline;">en psykopat</a>, och här har någon <a href="https://www.thingswritten.se/posts/ur-led-r-tiden" style="color: #333333; text-decoration: underline;">hittat någon att prata med</a>. Du kommer att få ett mejl varje gång något nytt publiceras.</p>
+              <!-- CTA Button -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                   <td style="border-radius: 4px; background-color: #111111;">
-                    <a href="${escapeHTML(siteURL)}"
+                    <a href="https://www.thingswritten.se"
                        style="display: inline-block; padding: 14px 28px;
                               font-family: Arial, sans-serif; font-size: 15px;
                               color: #ffffff; text-decoration: none;
                               border-radius: 4px; font-weight: bold;">
-                      Besök Things Written
+                      Things Written
                     </a>
                   </td>
                 </tr>
-              </table>`
-                : ''}
+              </table>
             </td>
           </tr>
 
