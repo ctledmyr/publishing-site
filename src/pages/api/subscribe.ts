@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
+import { generateWelcomeEmailHTML } from '../../lib/emailTemplate';
 
 export const prerender = false;
 
@@ -47,6 +49,23 @@ export const POST: APIRoute = async ({ request }) => {
     }
     console.error('[subscribe] Supabase error:', dbError);
     return json({ error: 'Failed to subscribe. Please try again.' }, 500);
+  }
+
+  // Send welcome email (fire-and-forget; don't block the subscription response)
+  try {
+    const siteURL = import.meta.env.SITE_URL;
+    const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(trimmed)}`;
+    const resend = new Resend(import.meta.env.RESEND_API_KEY);
+
+    await resend.emails.send({
+      from: import.meta.env.RESEND_FROM_EMAIL,
+      to: trimmed,
+      subject: 'Välkommen till Things Written',
+      html: generateWelcomeEmailHTML({ siteURL, unsubscribeURL }),
+    });
+  } catch (emailError) {
+    // Log but don't fail the subscription if the welcome email fails
+    console.error('[subscribe] Welcome email error:', emailError);
   }
 
   return json({ success: true });
