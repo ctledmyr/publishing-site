@@ -58,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
     const resend = new Resend(import.meta.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: import.meta.env.RESEND_FROM_EMAIL,
+      from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
       to: trimmed,
       subject: 'Välkommen till Things Written',
       html: generateWelcomeEmailHTML({ siteURL, unsubscribeURL }),

@@ -27,11 +27,11 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'TEST_EMAIL environment variable is not set.' }, 500);
   }
 
-  const fromEmail = import.meta.env.RESEND_FROM_EMAIL;
+  const fromEmail = `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`;
   const siteURL = import.meta.env.SITE_URL;
 
   const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(testEmail)}`;
-  const subject = `[TEST] Things Written - ${postTitle}`;
+  const subject = `[TEST] ${postTitle}`;
   const html = generateEmailHTML({ postTitle, postURL, siteURL, postContent, unsubscribeURL });
 
   const resend = new Resend(import.meta.env.RESEND_API_KEY);

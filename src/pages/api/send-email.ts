@@ -45,11 +45,11 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ sent: 0, total: 0, message: 'No active subscribers to notify.' });
   }
 
-  const fromEmail = import.meta.env.RESEND_FROM_EMAIL;
+  const fromEmail = `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`;
   const siteURL = import.meta.env.SITE_URL;
 
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
-  const subject = `Things Written - ${postTitle}`;
+  const subject = postTitle;
 
   // Build email objects for every subscriber (per-subscriber HTML for unique unsubscribe links)
   const emails = subscribers.map(({ email }: { email: string }) => {
