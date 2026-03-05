@@ -30,7 +30,7 @@ function contentToHTML(text: string): string {
   return text
     .trim()
     .split(/\n\n+/)
-    .map(para => `<p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">${escapeHTML(para.replace(/\n/g, ' '))}</p>`)
+    .map(para => `<p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">${escapeHTML(para).replace(/\n/g, '<br>')}</p>`)
     .join('\n');
 }
 
