@@ -44,6 +44,9 @@ export function generateWelcomeEmailHTML({ siteURL, unsubscribeURL }: { siteURL?
   <title>Välkommen till Things Written</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Georgia, 'Times New Roman', serif;">
+  <div style="display:none;font-size:1px;color:#f4f4f4;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+    &#8199;${'&#847;&#8199;'.repeat(80)}
+  </div>
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
          style="background-color: #f4f4f4;">
     <tr>
@@ -125,6 +128,9 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent, un
   <title>${safeTitle}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Georgia, 'Times New Roman', serif;">
+  <div style="display:none;font-size:1px;color:#f4f4f4;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">
+    &#8199;${'&#847;&#8199;'.repeat(80)}
+  </div>
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
          style="background-color: #f4f4f4;">
     <tr>
