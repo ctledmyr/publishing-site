@@ -5,7 +5,7 @@ draft: false
 ---
 
 ”Gud skapade människan till sin avbild.”  
-- Skapelseberättelsen, Första Moseboken  
+_Skapelseberättelsen, Första Moseboken_  
   
 ---  
   
