@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
-import { generateWelcomeEmailHTML } from '../../lib/emailTemplate';
+import { generateWelcomeEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
 
@@ -18,7 +18,7 @@ export const POST: APIRoute = async () => {
     from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
     to: testEmail,
     subject: '[TEST] Välkommen till Things Written',
-    html: generateWelcomeEmailHTML({ siteURL, unsubscribeURL }),
+    text: generateWelcomeEmail({ unsubscribeURL }),
   });
 
   if (error) {

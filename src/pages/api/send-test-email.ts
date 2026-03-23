@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
-import { generateEmailHTML } from '../../lib/emailTemplate';
+import { generateEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
 
@@ -32,14 +32,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(testEmail)}`;
   const subject = `[TEST] ${postTitle}`;
-  const html = generateEmailHTML({ postTitle, postURL, siteURL, postContent, unsubscribeURL });
+  const text = generateEmail({ postTitle, postURL, postContent, unsubscribeURL });
 
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: testEmail,
     subject,
-    html,
+    text,
   });
 
   if (error) {

@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
-import { generateEmailHTML } from '../../lib/emailTemplate';
+import { generateEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
 
@@ -58,7 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
       from: fromEmail,
       to: email,
       subject,
-      html: generateEmailHTML({ postTitle, postURL, siteURL, postContent, unsubscribeURL }),
+      text: generateEmail({ postTitle, postURL, postContent, unsubscribeURL }),
     };
   });
 

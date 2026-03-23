@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { generateWelcomeEmailHTML } from '../../lib/emailTemplate';
+import { generateWelcomeEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
 
@@ -61,7 +61,7 @@ export const POST: APIRoute = async ({ request }) => {
       from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
       to: trimmed,
       subject: 'Välkommen till Things Written',
-      html: generateWelcomeEmailHTML({ siteURL, unsubscribeURL }),
+      text: generateWelcomeEmail({ unsubscribeURL }),
     });
   } catch (emailError) {
     // Log but don't fail the subscription if the welcome email fails
