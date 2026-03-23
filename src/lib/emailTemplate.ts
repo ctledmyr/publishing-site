@@ -76,34 +76,19 @@ export function generateWelcomeEmailHTML({ siteURL, unsubscribeURL }: { siteURL?
               <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">Tack f&ouml;r att du vill vara med att l&auml;sa, hoppas att du gillar det!</p>
               <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #333333;">/CT</p>
               <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.7; color: #777777; font-style: italic;">PS. N&auml;r mina texter k&auml;nns mer som spam &auml;n l&auml;sgl&auml;dje, finns det nog en knapp n&aring;gonstans f&ouml;r att bli av med mig. Men den f&aring;r du hitta sj&auml;lv.</p>
-              <!-- CTA Button -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                <tr>
-                  <td style="border-radius: 4px; background-color: #111111;">
-                    <a href="https://www.thingswritten.se"
-                       style="display: inline-block; padding: 14px 28px;
-                              font-family: Arial, sans-serif; font-size: 15px;
-                              color: #ffffff; text-decoration: none;
-                              border-radius: 4px; font-weight: bold;">
-                      Things Written
-                    </a>
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
-            <td style="padding: 24px 40px; background-color: #f9f9f9;
-                       border-top: 1px solid #eeeeee;">
-              <p style="margin: 0; font-family: Arial, sans-serif; font-size: 12px;
-                        color: #aaaaaa; line-height: 1.6;">
-                Du får det här e-postmeddelandet eftersom du prenumererar${siteURL ? ` på <a href="${escapeHTML(siteURL)}" style="color: #aaaaaa;">${escapeHTML(siteURL)}</a>` : ''}.
+            <td style="padding: 24px 40px; border-top: 1px solid #eeeeee;">
+              <p style="margin: 0 0 6px 0; font-family: Arial, sans-serif; font-size: 13px;
+                        color: #999999; line-height: 1.6;">
+                Du prenumererar p&aring; <a href="https://www.thingswritten.se" style="color: #999999;">Things Written</a>
               </p>
-              <p style="margin: 8px 0 0 0; font-family: Arial, sans-serif; font-size: 12px;
-                        color: #aaaaaa; line-height: 1.6;">
-                <a href="${escapeHTML(unsubscribeURL)}" style="color: #aaaaaa;">Avsluta prenumeration</a>
+              <p style="margin: 0; font-family: Arial, sans-serif; font-size: 13px;
+                        color: #999999; line-height: 1.6;">
+                Vill du avsluta prenumerationen? <a href="${escapeHTML(unsubscribeURL)}" style="color: #999999;">Avprenumerera</a>
               </p>
             </td>
           </tr>
@@ -159,36 +144,25 @@ export function generateEmailHTML({ postTitle, postURL, siteURL, postContent, un
               </h1>
               ${postContent
                 ? `<div style="margin: 0 0 32px 0;">${contentToHTML(postContent)}</div>`
-                : `<p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.7; color: #555555;">Ett nytt inlägg har publicerats. Klicka på knappen nedan för att läsa det.</p>`
+                : `<p style="margin: 0 0 32px 0; font-size: 16px; line-height: 1.7; color: #555555;">Ett nytt inl&auml;gg har publicerats.</p>`
               }
-              <!-- CTA Button -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
-                <tr>
-                  <td style="border-radius: 4px; background-color: #111111;">
-                    <a href="${safeURL}"
-                       style="display: inline-block; padding: 14px 28px;
-                              font-family: Arial, sans-serif; font-size: 15px;
-                              color: #ffffff; text-decoration: none;
-                              border-radius: 4px; font-weight: bold;">
-                      Läs online
-                    </a>
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
 
           <!-- Footer -->
           <tr>
-            <td style="padding: 24px 40px; background-color: #f9f9f9;
-                       border-top: 1px solid #eeeeee;">
-              <p style="margin: 0; font-family: Arial, sans-serif; font-size: 12px;
-                        color: #aaaaaa; line-height: 1.6;">
-                Du får det här e-postmeddelandet eftersom du prenumererar${siteURL ? ` på <a href="${escapeHTML(siteURL)}" style="color: #aaaaaa;">${escapeHTML(siteURL)}</a>` : ''}.
+            <td style="padding: 24px 40px; border-top: 1px solid #eeeeee;">
+              <p style="margin: 0 0 6px 0; font-family: Arial, sans-serif; font-size: 13px;
+                        color: #999999; line-height: 1.6;">
+                <a href="${safeURL}" style="color: #999999;">L&auml;s texten online</a>
               </p>
-              <p style="margin: 8px 0 0 0; font-family: Arial, sans-serif; font-size: 12px;
-                        color: #aaaaaa; line-height: 1.6;">
-                <a href="${escapeHTML(unsubscribeURL)}" style="color: #aaaaaa;">Avsluta prenumeration</a>
+              <p style="margin: 0 0 6px 0; font-family: Arial, sans-serif; font-size: 13px;
+                        color: #999999; line-height: 1.6;">
+                Du prenumererar p&aring; <a href="https://www.thingswritten.se" style="color: #999999;">Things Written</a>
+              </p>
+              <p style="margin: 0; font-family: Arial, sans-serif; font-size: 13px;
+                        color: #999999; line-height: 1.6;">
+                Vill du avsluta prenumerationen? <a href="${escapeHTML(unsubscribeURL)}" style="color: #999999;">Avprenumerera</a>
               </p>
             </td>
           </tr>
