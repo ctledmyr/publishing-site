@@ -51,15 +51,11 @@ export const POST: APIRoute = async ({ request }) => {
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
   const subject = postTitle;
 
-  // Build email objects for every subscriber (per-subscriber HTML for unique unsubscribe links)
+  // Build email objects for every subscriber (per-subscriber content for unique unsubscribe links)
   const emails = subscribers.map(({ email }: { email: string }) => {
     const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
-    return {
-      from: fromEmail,
-      to: email,
-      subject,
-      text: generateEmail({ postTitle, postURL, postContent, unsubscribeURL }),
-    };
+    const { html, text } = generateEmail({ postTitle, postURL, postContent, unsubscribeURL });
+    return { from: fromEmail, to: email, subject, html, text };
   });
 
   // Send in batches of BATCH_SIZE (Resend limit)

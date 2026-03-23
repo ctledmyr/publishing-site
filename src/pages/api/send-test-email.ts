@@ -32,13 +32,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(testEmail)}`;
   const subject = `[TEST] ${postTitle}`;
-  const text = generateEmail({ postTitle, postURL, postContent, unsubscribeURL });
+  const { html, text } = generateEmail({ postTitle, postURL, postContent, unsubscribeURL });
 
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: testEmail,
     subject,
+    html,
     text,
   });
 

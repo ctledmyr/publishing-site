@@ -57,11 +57,13 @@ export const POST: APIRoute = async ({ request }) => {
     const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(trimmed)}`;
     const resend = new Resend(import.meta.env.RESEND_API_KEY);
 
+    const { html, text } = generateWelcomeEmail({ unsubscribeURL });
     await resend.emails.send({
       from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
       to: trimmed,
       subject: 'Välkommen till Things Written',
-      text: generateWelcomeEmail({ unsubscribeURL }),
+      html,
+      text,
     });
   } catch (emailError) {
     // Log but don't fail the subscription if the welcome email fails

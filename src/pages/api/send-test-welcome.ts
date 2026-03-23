@@ -13,12 +13,14 @@ export const POST: APIRoute = async () => {
   const siteURL = import.meta.env.SITE_URL;
   const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(testEmail)}`;
 
+  const { html, text } = generateWelcomeEmail({ unsubscribeURL });
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
     to: testEmail,
     subject: '[TEST] Välkommen till Things Written',
-    text: generateWelcomeEmail({ unsubscribeURL }),
+    html,
+    text,
   });
 
   if (error) {
