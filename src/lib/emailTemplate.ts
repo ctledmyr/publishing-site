@@ -35,7 +35,7 @@ function wrapHTML(body: string, footer: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin: 0; padding: 0; background-color: #ffffff; font-family: Georgia, 'Times New Roman', serif; color: #333333; font-size: 16px; line-height: 1.7;">
-  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+  <div style="max-width: 600px; margin: 0; padding: 40px 20px;">
     ${body}
     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dddddd; font-size: 13px; color: #999999; line-height: 1.8;">
       ${footer}
