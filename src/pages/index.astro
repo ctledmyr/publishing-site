@@ -17,25 +17,28 @@ const renderedPosts = await Promise.all(
       <p class="empty-state">Inga inlägg ännu. Kom tillbaka snart.</p>
     ) : (
       <ul class="post-list">
-        {renderedPosts.map(({ post, Content }) => (
-          <li class="post-item">
-            <a href={`/posts/${post.slug}`} class="post-link">
-              <span class="post-title">{post.data.title}</span>
-              <time
-                datetime={post.data.date.toISOString()}
-                class="post-date"
-              >
-                {post.data.date.toLocaleDateString('sv-SE', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-            </a>
-            <div class="post-content">
-              <Content />
-            </div>
-          </li>
+        {renderedPosts.map(({ post, Content }, index) => (
+          <>
+            {index > 0 && <li class="section-break" aria-hidden="true">❖ ❖ ❖</li>}
+            <li class="post-item">
+              <a href={`/posts/${post.slug}`} class="post-link">
+                <span class="post-title">{post.data.title}</span>
+                <time
+                  datetime={post.data.date.toISOString()}
+                  class="post-date"
+                >
+                  {post.data.date.toLocaleDateString('sv-SE', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </a>
+              <div class="post-content">
+                <Content />
+              </div>
+            </li>
+          </>
         ))}
       </ul>
     )}
@@ -82,16 +85,32 @@ const renderedPosts = await Promise.all(
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 0;
   }
 
   .post-item {
-    padding-bottom: 3rem;
-    border-bottom: 2px solid #cccccc;
+    padding: 2rem 0;
   }
 
-  .post-item:last-child {
-    border-bottom: none;
+  .post-item:first-child {
+    padding-top: 0;
+  }
+
+  .section-break {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: #cccccc;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+  }
+
+  .section-break::before,
+  .section-break::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #dddddd;
   }
 
   .post-link {
