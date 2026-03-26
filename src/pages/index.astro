@@ -11,7 +11,7 @@ const renderedPosts = await Promise.all(
 ---
 <BaseLayout title="Things Written" description="A handwritten publishing journal.">
   <section class="posts-section">
-    <h1>Inlägg</h1>
+    <h1>Texter</h1>
 
     {renderedPosts.length === 0 ? (
       <p class="empty-state">Inga inlägg ännu. Kom tillbaka snart.</p>
@@ -121,7 +121,7 @@ const renderedPosts = await Promise.all(
   }
 
   .post-title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: var(--color-text);
     transition: opacity 0.15s;
   }
