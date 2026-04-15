@@ -9,6 +9,7 @@ Dagarna följer en oföränderlig rytm. Varje morgon fylls gatorna när människ
 Kontorsarbetaren stryker sin skjorta och går på sina möten. Blomsterhandlaren på torget ställer fram sina växter på morgonen och plockar in de som inte blivit sålda vid dagens slut. Brevbäraren betar av sin rutt.  
   
 Människorna vallas genom dygnet fram till helgen då fyrkantighetens hör rundas av något och man kan ta dagen som den kommer.  
+
 Klaustrofobiskt kan tyckas. Men akta dig för att önska för stora hack i rytmen.   
   
 ---  
