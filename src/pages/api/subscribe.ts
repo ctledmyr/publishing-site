@@ -60,6 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { html, text } = generateWelcomeEmail({ unsubscribeURL });
     await resend.emails.send({
       from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
+      replyTo: 'ctledmyr@gmail.com',
       to: trimmed,
       subject: 'Välkommen till Things Written',
       html,

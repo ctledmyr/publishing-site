@@ -55,7 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
   const emails = subscribers.map(({ email }: { email: string }) => {
     const unsubscribeURL = `${siteURL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
     const { html, text } = generateEmail({ postTitle, postURL, postContent, unsubscribeURL });
-    return { from: fromEmail, to: email, subject, html, text };
+    return { from: fromEmail, replyTo: 'ctledmyr@gmail.com', to: email, subject, html, text };
   });
 
   // Send in batches of BATCH_SIZE (Resend limit)

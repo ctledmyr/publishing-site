@@ -37,6 +37,7 @@ export const POST: APIRoute = async ({ request }) => {
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: fromEmail,
+    replyTo: 'ctledmyr@gmail.com',
     to: testEmail,
     subject,
     html,

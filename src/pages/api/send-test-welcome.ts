@@ -17,6 +17,7 @@ export const POST: APIRoute = async () => {
   const resend = new Resend(import.meta.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: `Things Written <${import.meta.env.RESEND_FROM_EMAIL}>`,
+    replyTo: 'ctledmyr@gmail.com',
     to: testEmail,
     subject: '[TEST] Välkommen till Things Written',
     html,
