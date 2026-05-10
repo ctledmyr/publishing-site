@@ -19,11 +19,31 @@ function escapeHTML(str: string): string {
     .replace(/'/g, '&#039;');
 }
 
+const BULLET_RE = /^\s*[-*+]\s+/;
+const isBulletLine = (line: string) => BULLET_RE.test(line);
+
 function contentToHTML(text: string): string {
   return text
     .trim()
     .split(/\n\n+/)
-    .map(para => `<p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.7; mso-line-height-rule: exactly;">${escapeHTML(para).replace(/\n/g, '<br>')}</p>`)
+    .map(block => {
+      const lines = block.split('\n');
+      const hasBullet = lines.some(isBulletLine);
+      const allBulletOrBlank = lines.every(line => isBulletLine(line) || line.trim() === '');
+
+      if (hasBullet && allBulletOrBlank) {
+        const items = lines
+          .filter(isBulletLine)
+          .map(line => {
+            const itemContent = line.replace(BULLET_RE, '');
+            return `<li style="margin: 0 0 8px 0; font-size: 16px; line-height: 1.7; mso-line-height-rule: exactly;">${escapeHTML(itemContent)}</li>`;
+          })
+          .join('\n');
+        return `<ul style="margin: 0 0 16px 0; padding-left: 24px; font-size: 16px; line-height: 1.7; mso-line-height-rule: exactly;">\n${items}\n</ul>`;
+      }
+
+      return `<p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.7; mso-line-height-rule: exactly;">${escapeHTML(block).replace(/\n/g, '<br>')}</p>`;
+    })
     .join('\n');
 }
 
@@ -88,8 +108,7 @@ Vill du avsluta prenumerationen? Avprenumerera (${unsubscribeURL})`;
   return { html, text };
 }
 
-export function generateEmail({ postTitle, postURL, postContent, unsubscribeURL }: EmailTemplateData): EmailResult {
-  const safeTitle = escapeHTML(postTitle);
+export function generateEmail({ postTitle: _postTitle, postURL, postContent, unsubscribeURL }: EmailTemplateData): EmailResult {
   const safeURL = escapeHTML(postURL);
 
   const bodyHTML = postContent?.trim()
@@ -100,17 +119,15 @@ export function generateEmail({ postTitle, postURL, postContent, unsubscribeURL 
     ? postContent.trim()
     : 'Ett nytt inlägg har publicerats.';
 
+  // Post title intentionally omitted from the body — it already appears as the email subject.
   const html = wrapHTML(
-    `<h1 style="margin: 0 0 20px 0; font-size: 26px; line-height: 1.3; color: #111111; font-weight: normal; mso-line-height-rule: exactly;">${safeTitle}</h1>
-    ${bodyHTML}`,
+    bodyHTML,
     `<p style="margin: 0 0 4px 0; font-size: 13px; line-height: 1.8; mso-line-height-rule: exactly;"><a href="${safeURL}" style="color: #999999; font-size: 13px;">L&auml;s texten online</a></p>
     <p style="margin: 0 0 4px 0; font-size: 13px; line-height: 1.8; mso-line-height-rule: exactly;">Du prenumererar p&aring; <a href="https://www.thingswritten.se" style="color: #999999; font-size: 13px;">Things Written</a></p>
     <p style="margin: 0; font-size: 13px; line-height: 1.8; mso-line-height-rule: exactly;">Vill du avsluta prenumerationen? <a href="${escapeHTML(unsubscribeURL)}" style="color: #999999; font-size: 13px;">Avprenumerera</a></p>`
   );
 
-  const text = `${postTitle}
-
-${bodyText}
+  const text = `${bodyText}
 
 ---
 Läs texten online (${postURL})
