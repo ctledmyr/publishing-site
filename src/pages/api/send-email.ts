@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 import { generateEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
@@ -25,10 +26,17 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'postTitle and postURL are required.' }, 400);
   }
 
-  // Fetch active subscribers from Supabase
+  // Fetch active subscribers from Supabase.
+  // Pass `ws` as the realtime WebSocket constructor so the client doesn't fall
+  // back to a missing global WebSocket on Node 20 serverless runtimes.
   const supabase = createClient(
     import.meta.env.SUPABASE_URL,
-    import.meta.env.SUPABASE_SERVICE_ROLE_KEY
+    import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
+    {
+      db: { schema: 'public' },
+      auth: { persistSession: false },
+      realtime: { webSocketConstructor: ws as unknown as typeof WebSocket },
+    }
   );
 
   const { data: subscribers, error: dbError } = await supabase
