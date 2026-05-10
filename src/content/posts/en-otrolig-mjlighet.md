@@ -9,6 +9,7 @@ Som småbarnsförälder har man generellt sett tre möjligheter till ensamtid:
 - Att gå upp tidigt eller gå och lägga sig sent (även om agerande som ytterligare begränsar sömnen ska övervägas med varsamhet).  
 - Att gå på toa.  
   
+
 Men om några dagar står Jupiter i vinkel till Mars, vilket (om man kan sin astrologi) innebär att jag har två hela dygn av ensamtid. 48 timmar mitt i veckan utan jobb och barn.   
   
 Ett vitt papper.  
