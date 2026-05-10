@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
-import { createClient } from '@supabase/supabase-js';
 import { generateEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
@@ -25,26 +24,33 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'postTitle and postURL are required.' }, 400);
   }
 
-  // Fetch active subscribers from Supabase.
-  // This endpoint only queries the database — we don't need realtime. Setting
-  // realtime.timeout to 0 keeps the client from ever attempting to open a
-  // WebSocket on the serverless runtime, which avoids the Node 20 WS error.
-  const supabase = createClient(
-    import.meta.env.SUPABASE_URL,
-    import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
-    {
-      auth: { persistSession: false },
-      realtime: { timeout: 0 },
+  // Fetch active subscribers via Supabase's PostgREST endpoint directly.
+  // The supabase-js client always spins up a RealtimeClient on creation,
+  // which triggers a WebSocket error on the Node 20 serverless runtime. A
+  // plain fetch sidesteps that entirely — we only need a single REST read.
+  const supabaseURL = import.meta.env.SUPABASE_URL;
+  const supabaseKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  let subscribers: { email: string }[];
+  try {
+    const res = await fetch(
+      `${supabaseURL}/rest/v1/subscribers?active=eq.true&select=email`,
+      {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          Accept: 'application/json',
+        },
+      }
+    );
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      console.error('[send-email] Supabase REST error:', res.status, errText);
+      return json({ error: 'Failed to fetch subscribers.' }, 500);
     }
-  );
-
-  const { data: subscribers, error: dbError } = await supabase
-    .from('subscribers')
-    .select('email')
-    .eq('active', true);
-
-  if (dbError) {
-    console.error('[send-email] Supabase error:', dbError);
+    subscribers = (await res.json()) as { email: string }[];
+  } catch (err) {
+    console.error('[send-email] Supabase fetch failed:', err);
     return json({ error: 'Failed to fetch subscribers.' }, 500);
   }
 
