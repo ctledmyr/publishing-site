@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
-import ws from 'ws';
 import { generateEmail } from '../../lib/emailTemplate';
 
 export const prerender = false;
@@ -27,15 +26,15 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // Fetch active subscribers from Supabase.
-  // Pass `ws` as the realtime WebSocket constructor so the client doesn't fall
-  // back to a missing global WebSocket on Node 20 serverless runtimes.
+  // This endpoint only queries the database — we don't need realtime. Setting
+  // realtime.timeout to 0 keeps the client from ever attempting to open a
+  // WebSocket on the serverless runtime, which avoids the Node 20 WS error.
   const supabase = createClient(
     import.meta.env.SUPABASE_URL,
     import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
     {
-      db: { schema: 'public' },
       auth: { persistSession: false },
-      realtime: { webSocketConstructor: ws as unknown as typeof WebSocket },
+      realtime: { timeout: 0 },
     }
   );
 
