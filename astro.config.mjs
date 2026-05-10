@@ -1,31 +1,40 @@
 import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel/serverless';
 
-// Moves a trailing <p> that is the last block child of the last <li> out of the
-// list, so a paragraph after a bullet list is never visually nested as a list item.
+// When a loose markdown list results in a trailing <p> being parsed as the last
+// block child of the last <li>, move that <p> out to after the </ul>/<ol>.
 function rehypeUnwrapListTrailingParagraph() {
-  function walk(node) {
-    if (!node.children) return;
-    node.children.forEach(walk);
+  return function transformer(tree) {
+    processNode(tree);
+  };
+}
 
-    for (let i = 0; i < node.children.length; i++) {
-      const child = node.children[i];
-      if (child.type !== 'element') continue;
-      if (child.tagName !== 'ul' && child.tagName !== 'ol') continue;
+function processNode(node) {
+  if (!node.children) return;
 
-      const lis = child.children.filter(c => c.type === 'element' && c.tagName === 'li');
-      if (!lis.length) continue;
-      const lastLi = lis[lis.length - 1];
+  // Bottom-up: process descendants first so nested lists are handled before parents.
+  node.children.forEach(processNode);
 
-      const blocks = lastLi.children.filter(c => c.type === 'element');
-      if (blocks.length < 2 || blocks[blocks.length - 1].tagName !== 'p') continue;
+  for (let i = 0; i < node.children.length; i++) {
+    const child = node.children[i];
+    if (child.type !== 'element') continue;
+    if (child.tagName !== 'ul' && child.tagName !== 'ol') continue;
 
-      const trailingP = blocks[blocks.length - 1];
-      lastLi.children = lastLi.children.filter(c => c !== trailingP);
-      node.children.splice(i + 1, 0, trailingP);
-    }
+    const lastLi = [...child.children]
+      .reverse()
+      .find(c => c.type === 'element' && c.tagName === 'li');
+    if (!lastLi) continue;
+
+    const blockChildren = lastLi.children.filter(c => c.type === 'element');
+    if (blockChildren.length < 2) continue;
+
+    const lastBlock = blockChildren[blockChildren.length - 1];
+    if (lastBlock.tagName !== 'p') continue;
+
+    // Detach the trailing paragraph from the last list item and place it after the list.
+    lastLi.children = lastLi.children.filter(c => c !== lastBlock);
+    node.children.splice(i + 1, 0, lastBlock);
   }
-  return walk;
 }
 
 export default defineConfig({
