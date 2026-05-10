@@ -17,14 +17,50 @@ function sanitizeSlug(slug: string): string {
     .replace(/^-|-$/g, '');
 }
 
+/**
+ * Ensure a blank line separates a bullet list from any following non-bullet content,
+ * so the trailing paragraph doesn't get parsed as part of the last list item.
+ */
+function ensureBlankLineAfterBulletList(content: string): string {
+  const lines = content.split('\n');
+  const isBulletLine = (line: string) => /^\s*[-*+]\s+/.test(line);
+  const result: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    result.push(line);
+
+    if (i + 1 >= lines.length) continue;
+    if (!isBulletLine(line)) continue;
+
+    const next = lines[i + 1];
+    if (next.trim() === '') continue;     // already a blank line
+    if (isBulletLine(next)) continue;     // next is another bullet — still in the list
+
+    result.push('');                       // insert blank line to terminate the list
+  }
+
+  return result.join('\n');
+}
+
 /** Build the markdown file content with YAML frontmatter. */
 function buildMarkdown(data: { title: string; slug: string; content: string }): string {
   const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   // Escape double-quotes in strings that go into quoted YAML scalars
   const safeTitle = data.title.replace(/"/g, '\\"');
 
-  // Append two trailing spaces before each newline — markdown hard line break syntax
-  const body = data.content.trim().replace(/\n/g, '  \n');
+  const preprocessed = ensureBlankLineAfterBulletList(data.content.trim());
+
+  // Append two trailing spaces before each newline — markdown hard line break syntax.
+  // Skip blank lines and bullet lines, where hard breaks would change parsing semantics.
+  const body = preprocessed
+    .split('\n')
+    .map(line => {
+      if (line.trim() === '') return '';
+      if (/^\s*[-*+]\s+/.test(line)) return line;
+      return line + '  ';
+    })
+    .join('\n');
 
   return `---
 title: "${safeTitle}"

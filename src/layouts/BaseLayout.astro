@@ -87,6 +87,20 @@ const { title, description = 'A handwritten publishing site.' } = Astro.props;
         color: var(--color-text);
       }
     </style>
+    <style is:global>
+      article ul,
+      article ol {
+        margin: 0 0 1.8em 0;
+        padding-left: 1.5em;
+      }
+      article ul,
+      article ul li {
+        list-style-type: disc;
+      }
+      article ul li::marker {
+        color: #111111;
+      }
+    </style>
   </head>
   <body>
     <div class="site-wrapper">
