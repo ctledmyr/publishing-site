@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { generateWelcomeEmail } from '../../lib/emailTemplate';
 
@@ -33,21 +32,36 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'A valid email address is required.' }, 400);
   }
 
-  const supabase = createClient(
-    import.meta.env.SUPABASE_URL,
-    import.meta.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  // Insert the subscriber via Supabase's PostgREST endpoint directly. Using
+  // supabase-js here spins up a RealtimeClient that fails on Node 20
+  // serverless — a plain fetch sidesteps that and is all we need for a
+  // single INSERT.
+  const supabaseURL = import.meta.env.SUPABASE_URL;
+  const supabaseKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  const { error: dbError } = await supabase
-    .from('subscribers')
-    .insert({ email: trimmed });
+  try {
+    const res = await fetch(`${supabaseURL}/rest/v1/subscribers`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ email: trimmed }),
+    });
 
-  if (dbError) {
-    // PostgreSQL unique_violation error code
-    if (dbError.code === '23505') {
-      return json({ error: 'This email is already subscribed.' }, 409);
+    if (!res.ok) {
+      // PostgREST surfaces a unique constraint violation as 409 with PG code 23505.
+      if (res.status === 409) {
+        return json({ error: 'This email is already subscribed.' }, 409);
+      }
+      const errBody = await res.text().catch(() => '');
+      console.error('[subscribe] Supabase REST error:', res.status, errBody);
+      return json({ error: 'Failed to subscribe. Please try again.' }, 500);
     }
-    console.error('[subscribe] Supabase error:', dbError);
+  } catch (err) {
+    console.error('[subscribe] Supabase fetch failed:', err);
     return json({ error: 'Failed to subscribe. Please try again.' }, 500);
   }
 

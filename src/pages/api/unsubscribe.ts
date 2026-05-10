@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { createClient } from '@supabase/supabase-js';
 
 export const prerender = false;
 
@@ -10,18 +9,34 @@ export const GET: APIRoute = async ({ url }) => {
     return page('Ogiltig länk. E-postadress saknas.', 400);
   }
 
-  const supabase = createClient(
-    import.meta.env.SUPABASE_URL,
-    import.meta.env.SUPABASE_SERVICE_ROLE_KEY
-  );
+  // PATCH the subscriber row directly via PostgREST. supabase-js spins up
+  // a RealtimeClient on creation that fails on Node 20 serverless; a plain
+  // fetch avoids that for this single UPDATE.
+  const supabaseURL = import.meta.env.SUPABASE_URL;
+  const supabaseKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+  const normalized = email.toLowerCase().trim();
 
-  const { error } = await supabase
-    .from('subscribers')
-    .update({ active: false })
-    .eq('email', email.toLowerCase().trim());
-
-  if (error) {
-    console.error('[unsubscribe] Supabase error:', error);
+  try {
+    const res = await fetch(
+      `${supabaseURL}/rest/v1/subscribers?email=eq.${encodeURIComponent(normalized)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ active: false }),
+      }
+    );
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => '');
+      console.error('[unsubscribe] Supabase REST error:', res.status, errBody);
+      return page('Något gick fel. Försök igen senare.', 500);
+    }
+  } catch (err) {
+    console.error('[unsubscribe] Supabase fetch failed:', err);
     return page('Något gick fel. Försök igen senare.', 500);
   }
 
