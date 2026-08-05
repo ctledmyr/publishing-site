@@ -4,7 +4,7 @@ date: "2026-08-05"
 draft: false
 ---
 
-*[Del I - Mellan tallarna](https://www.thingswritten.se/posts/sommarfljetong-del-i-mellan-tallarna)*  
+Del I - Mellan tallarna: https://www.thingswritten.se/posts/sommarfljetong-del-i-mellan-tallarna  
 
 ---  
 
