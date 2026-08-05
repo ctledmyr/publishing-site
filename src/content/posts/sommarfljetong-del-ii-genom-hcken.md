@@ -4,10 +4,6 @@ date: "2026-08-05"
 draft: false
 ---
 
-Del I - Mellan tallarna: https://www.thingswritten.se/posts/sommarfljetong-del-i-mellan-tallarna  
-
----  
-
 Genom häcken på baksidan av huset kan Jossan höra om Schenströms har gäster över på middag. Från sonens rum på övervåningen kan hon till och med skymta grillplatsen men det hade ju varit befängt om hon stod och spanade på Ola Schenström medan han grillade.  
 
 Jossan älskar att komma ner till sommarhuset. Det har hon alltid gjort. Golfen, tennisen, och att träffa vännerna från stan under mer avslappnade former.  
