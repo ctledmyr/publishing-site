@@ -4,16 +4,6 @@ date: "2026-08-06"
 draft: false
 ---
 
-Sista delen. Tidigare avsnitt på länkarna nedan.  
-
-Del I - Mellan tallarna: https://www.thingswritten.se/posts/sommarfljetong-del-i-mellan-tallarna  
-
-Del II - Genom häcken: https://www.thingswritten.se/posts/sommarfljetong-del-ii-genom-hcken  
-
----  
-
-Del III - Över staketet  
-
 Susanna kan inte minnas när hon var nere vid glasskiosken senast. Golf har blivit till en försommaraktivitet för henne och Ola. Frun i grannhuset har berättat att de arrangerar damgolf med efterföljande After Swing varje tisdag i juli, men Susanna har, så vänligt hon kan, förklarat att golf är en aktivitet hon utför tillsammans med sin make.  
 
 I takt med byggandet har Schenströms dragit sig tillbaka. Idyllen har blivit en After Swing. Anita har blivit en Jossan.   
