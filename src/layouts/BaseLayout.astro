@@ -1,10 +1,20 @@
 ---
+import SubscribeForm from '../components/SubscribeForm.astro';
+
 interface Props {
   title: string;
   description?: string;
 }
 
 const { title, description = 'A handwritten publishing site.' } = Astro.props;
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+// Admin pages share this layout but should not show the subscribe form
+const showSubscribe = !path.startsWith('/admin');
+const navLinks = [
+  { href: '/', label: 'Start' },
+  { href: '/texter', label: 'Texter' },
+];
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -66,6 +76,15 @@ const { title, description = 'A handwritten publishing site.' } = Astro.props;
         color: var(--color-text);
       }
 
+      header nav {
+        display: flex;
+        gap: 1.25rem;
+      }
+
+      header nav a[aria-current='page'] {
+        color: var(--color-text);
+      }
+
       .site-name {
         font-family: var(--font-sans);
         font-size: 1rem;
@@ -112,12 +131,16 @@ const { title, description = 'A handwritten publishing site.' } = Astro.props;
       <header>
         <a href="/" class="site-name">Things Written</a>
         <nav>
-          <a href="/#subscribe">Prenumerera</a>
+          {navLinks.map(({ href, label }) => (
+            <a href={href} aria-current={path === href ? 'page' : undefined}>{label}</a>
+          ))}
+          <a href={showSubscribe ? '#subscribe' : '/#subscribe'}>Prenumerera</a>
         </nav>
       </header>
 
       <main>
         <slot />
+        {showSubscribe && <SubscribeForm />}
       </main>
 
       <footer>

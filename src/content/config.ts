@@ -10,4 +10,19 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { posts };
+// Landing page content: welcome text (body) and selected posts (frontmatter)
+const start = defineCollection({
+  type: 'content',
+  schema: z.object({
+    texter: z
+      .array(
+        z.object({
+          slug: z.string().default(''),
+          rad: z.string().default(''),
+        })
+      )
+      .default([]),
+  }),
+});
+
+export const collections = { posts, start };

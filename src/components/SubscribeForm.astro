@@ -1,0 +1,148 @@
+<hr class="divider" />
+
+<section id="subscribe" class="subscribe-section">
+  <h2>Prenumerera</h2>
+  <p>Få nya inlägg direkt i din inkorg.</p>
+
+  <form id="subscribe-form" class="subscribe-form" novalidate>
+    <div class="form-row">
+      <input
+        type="email"
+        id="subscribe-email"
+        name="email"
+        placeholder="du@exempel.se"
+        required
+        autocomplete="email"
+      />
+      <button type="submit">Prenumerera</button>
+    </div>
+    <p id="subscribe-message" class="form-message" aria-live="polite"></p>
+  </form>
+</section>
+
+<style>
+  .divider {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    width: 45%;
+    margin: 3rem 0;
+  }
+
+  .subscribe-section h2 {
+    font-size: 1.4rem;
+    font-weight: normal;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .subscribe-section p {
+    margin: 0 0 1.25rem 0;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  input[type="email"] {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="email"]:focus {
+    border-color: var(--color-accent);
+  }
+
+  button[type="submit"] {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    background-color: var(--color-accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  button[type="submit"]:hover {
+    opacity: 0.8;
+  }
+
+  button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .form-message {
+    margin: 0.75rem 0 0 0;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    min-height: 1.2em;
+  }
+
+  .form-message.success {
+    color: #2d6a2d;
+  }
+
+  .form-message.error {
+    color: #b91c1c;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('subscribe-form') as HTMLFormElement;
+  const emailInput = document.getElementById('subscribe-email') as HTMLInputElement;
+  const message = document.getElementById('subscribe-message') as HTMLParagraphElement;
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = emailInput.value.trim();
+    if (!email) return;
+
+    submitBtn.disabled = true;
+    message.textContent = 'Prenumererar...';
+    message.className = 'form-message';
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        message.textContent = 'Prenumererad! Tack.';
+        message.className = 'form-message success';
+        emailInput.value = '';
+      } else if (res.status === 409) {
+        message.textContent = 'Du är redan prenumerant.';
+        message.className = 'form-message error';
+      } else {
+        message.textContent = result.error || 'Något gick fel. Försök igen.';
+        message.className = 'form-message error';
+      }
+    } catch {
+      message.textContent = 'Nätverksfel. Försök igen.';
+      message.className = 'form-message error';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>

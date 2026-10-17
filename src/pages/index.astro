@@ -1,285 +1,108 @@
 ---
-export const prerender = false;
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const allPosts = await getCollection('posts', ({ data }) => !data.draft);
-const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const renderedPosts = await Promise.all(
-  posts.map(async (post) => ({ post, Content: (await post.render()).Content }))
-);
+export const prerender = true;
+
+const start = await getEntry('start', 'start');
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+
+// Skip any slug that does not match a published post
+const cards = (start?.data.texter ?? []).flatMap((item) => {
+  const post = posts.find((p) => p.slug === item.slug.trim());
+  return post ? [{ post, line: item.rad }] : [];
+});
+
+const Welcome = start ? (await start.render()).Content : null;
 ---
-<BaseLayout title="Things Written" description="A handwritten publishing journal.">
-  <section class="posts-section">
-    <h1>Texter</h1>
+<BaseLayout title="Things Written" description="Texter av Things Written.">
+  {Welcome && (
+    <section class="welcome">
+      <Welcome />
+    </section>
+  )}
 
-    {renderedPosts.length === 0 ? (
-      <p class="empty-state">Inga inlägg ännu. Kom tillbaka snart.</p>
-    ) : (
-      <ul class="posts-index-list">
-        {renderedPosts.map(({ post, Content }, index) => (
-          <>
-            {index > 0 && <li class="section-break" aria-hidden="true">❖ ❖ ❖</li>}
-            <li class="post-item">
-              <a href={`/posts/${post.slug}`} class="post-link">
-                <span class="post-title">{post.data.title}</span>
-                <time
-                  datetime={post.data.date.toISOString()}
-                  class="post-date"
-                >
-                  {post.data.date.toLocaleDateString('sv-SE', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-              </a>
-              <div class="post-content">
-                <Content />
-              </div>
-            </li>
-          </>
-        ))}
-      </ul>
-    )}
-  </section>
+  {cards.length > 0 && (
+    <ul class="cards">
+      {cards.map(({ post, line }) => (
+        <li>
+          <a href={`/posts/${post.slug}`} class="card">
+            <span class="card-title">{post.data.title}</span>
+            {line && <span class="card-line">{line}</span>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
 
-  <hr class="divider" />
-
-  <section id="subscribe" class="subscribe-section">
-    <h2>Prenumerera</h2>
-    <p>Få nya inlägg direkt i din inkorg.</p>
-
-    <form id="subscribe-form" class="subscribe-form" novalidate>
-      <div class="form-row">
-        <input
-          type="email"
-          id="subscribe-email"
-          name="email"
-          placeholder="du@exempel.se"
-          required
-          autocomplete="email"
-        />
-        <button type="submit">Prenumerera</button>
-      </div>
-      <p id="subscribe-message" class="form-message" aria-live="polite"></p>
-    </form>
-  </section>
+  <p class="all-texts">
+    <a href="/texter">Alla texter &rarr;</a>
+  </p>
 </BaseLayout>
 
 <style>
-  h1 {
-    font-size: 1.75rem;
-    font-weight: normal;
-    margin: 0 0 2rem 0;
-  }
-
-  .empty-state {
-    color: var(--color-muted);
-    font-style: italic;
-  }
-
-  .posts-index-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .post-item {
-    padding: 2rem 0;
-  }
-
-  .post-item:first-child {
-    padding-top: 0;
-  }
-
-  .section-break {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    color: #111111;
-    font-size: 1rem;
-    letter-spacing: 0.25em;
-  }
-
-  .section-break::before,
-  .section-break::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #111111;
-  }
-
-  .post-link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    text-decoration: none;
-  }
-
-  .post-title {
-    font-size: 1.5rem;
-    color: var(--color-text);
-    transition: opacity 0.15s;
-  }
-
-  .post-link:hover .post-title {
-    opacity: 0.7;
-  }
-
-  .post-date {
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
-    color: var(--color-muted);
-  }
-
-  .post-content {
-    margin: 0.75rem 0 0 0;
+  .welcome {
     font-size: 1.0625rem;
-    color: var(--color-text);
     line-height: 1.8;
+    margin-bottom: 2.5rem;
   }
 
-  .post-content :global(p) {
+  .welcome :global(p) {
     margin: 0 0 1.8em 0;
   }
 
-  .post-content :global(p:last-child) {
+  .welcome :global(p:last-child) {
     margin-bottom: 0;
   }
 
-  .post-content :global(hr) {
-    border: none;
-    border-top: 1px solid var(--color-border);
-    width: 45%;
-    margin: 3rem 0;
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid var(--color-border);
-    width: 45%;
-    margin: 3rem 0;
-  }
-
-  .subscribe-section h2 {
-    font-size: 1.4rem;
-    font-weight: normal;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .subscribe-section p {
-    margin: 0 0 1.25rem 0;
-    color: var(--color-muted);
-    font-size: 0.95rem;
-  }
-
-  .form-row {
+  .cards {
+    list-style: none;
+    margin: 0 0 2rem 0;
+    padding: 0;
     display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  input[type="email"] {
-    flex: 1;
-    min-width: 200px;
-    padding: 0.6rem 0.9rem;
-    font-size: 1rem;
-    font-family: var(--font-sans);
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem 1.5rem;
     border: 1px solid var(--color-border);
     border-radius: 4px;
-    background: var(--color-bg);
-    color: var(--color-text);
-    outline: none;
+    text-decoration: none;
     transition: border-color 0.15s;
   }
 
-  input[type="email"]:focus {
-    border-color: var(--color-accent);
+  .card:hover,
+  .card:focus-visible {
+    border-color: var(--color-muted);
   }
 
-  button[type="submit"] {
-    padding: 0.6rem 1.2rem;
+  .card-title {
+    font-size: 1.5rem;
+    color: var(--color-text);
+    line-height: 1.3;
+  }
+
+  .card-line {
+    font-size: 1rem;
+    color: var(--color-muted);
+  }
+
+  .all-texts {
+    margin: 0;
+    font-family: var(--font-sans);
     font-size: 0.9rem;
-    font-family: var(--font-sans);
-    background-color: var(--color-accent);
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    white-space: nowrap;
   }
 
-  button[type="submit"]:hover {
-    opacity: 0.8;
+  .all-texts a {
+    color: var(--color-muted);
+    text-decoration: none;
   }
 
-  button[type="submit"]:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .form-message {
-    margin: 0.75rem 0 0 0;
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    min-height: 1.2em;
-  }
-
-  .form-message.success {
-    color: #2d6a2d;
-  }
-
-  .form-message.error {
-    color: #b91c1c;
+  .all-texts a:hover {
+    color: var(--color-text);
   }
 </style>
-
-<script>
-  const form = document.getElementById('subscribe-form') as HTMLFormElement;
-  const emailInput = document.getElementById('subscribe-email') as HTMLInputElement;
-  const message = document.getElementById('subscribe-message') as HTMLParagraphElement;
-  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const email = emailInput.value.trim();
-    if (!email) return;
-
-    submitBtn.disabled = true;
-    message.textContent = 'Prenumererar...';
-    message.className = 'form-message';
-
-    try {
-      const res = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        message.textContent = 'Prenumererad! Tack.';
-        message.className = 'form-message success';
-        emailInput.value = '';
-      } else if (res.status === 409) {
-        message.textContent = 'Du är redan prenumerant.';
-        message.className = 'form-message error';
-      } else {
-        message.textContent = result.error || 'Något gick fel. Försök igen.';
-        message.className = 'form-message error';
-      }
-    } catch {
-      message.textContent = 'Nätverksfel. Försök igen.';
-      message.className = 'form-message error';
-    } finally {
-      submitBtn.disabled = false;
-    }
-  });
-</script>

@@ -1,0 +1,138 @@
+---
+export const prerender = false;
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const renderedPosts = await Promise.all(
+  posts.map(async (post) => ({ post, Content: (await post.render()).Content }))
+);
+---
+<BaseLayout title="Things Written" description="A handwritten publishing journal.">
+  <section class="posts-section">
+    <h1>Texter</h1>
+
+    {renderedPosts.length === 0 ? (
+      <p class="empty-state">Inga inlägg ännu. Kom tillbaka snart.</p>
+    ) : (
+      <ul class="posts-index-list">
+        {renderedPosts.map(({ post, Content }, index) => (
+          <>
+            {index > 0 && <li class="section-break" aria-hidden="true">❖ ❖ ❖</li>}
+            <li class="post-item">
+              <a href={`/posts/${post.slug}`} class="post-link">
+                <span class="post-title">{post.data.title}</span>
+                <time
+                  datetime={post.data.date.toISOString()}
+                  class="post-date"
+                >
+                  {post.data.date.toLocaleDateString('sv-SE', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+              </a>
+              <div class="post-content">
+                <Content />
+              </div>
+            </li>
+          </>
+        ))}
+      </ul>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: 1.75rem;
+    font-weight: normal;
+    margin: 0 0 2rem 0;
+  }
+
+  .empty-state {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .posts-index-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .post-item {
+    padding: 2rem 0;
+  }
+
+  .post-item:first-child {
+    padding-top: 0;
+  }
+
+  .section-break {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    color: #111111;
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+  }
+
+  .section-break::before,
+  .section-break::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #111111;
+  }
+
+  .post-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-decoration: none;
+  }
+
+  .post-title {
+    font-size: 1.5rem;
+    color: var(--color-text);
+    transition: opacity 0.15s;
+  }
+
+  .post-link:hover .post-title {
+    opacity: 0.7;
+  }
+
+  .post-date {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .post-content {
+    margin: 0.75rem 0 0 0;
+    font-size: 1.0625rem;
+    color: var(--color-text);
+    line-height: 1.8;
+  }
+
+  .post-content :global(p) {
+    margin: 0 0 1.8em 0;
+  }
+
+  .post-content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .post-content :global(hr) {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    width: 45%;
+    margin: 3rem 0;
+  }
+</style>
