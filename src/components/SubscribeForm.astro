@@ -94,6 +94,7 @@
   }
 
   .form-message.success {
+    margin-top: 0;
     color: #2d6a2d;
   }
 
@@ -128,9 +129,12 @@
       const result = await res.json();
 
       if (res.ok) {
-        message.textContent = 'Prenumererad! Tack.';
+        message.textContent = 'Du ska ha fått ett meddelande i din inkorg. Kolla i skräppost också, för säkerhets skull.';
         message.className = 'form-message success';
         emailInput.value = '';
+        // Signup is done: hide the input and button, leave only the message
+        const row = form.querySelector('.form-row') as HTMLDivElement | null;
+        if (row) row.style.display = 'none';
       } else if (res.status === 409) {
         message.textContent = 'Du är redan prenumerant.';
         message.className = 'form-message error';
