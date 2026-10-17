@@ -14,6 +14,7 @@ const posts = defineCollection({
 const start = defineCollection({
   type: 'content',
   schema: z.object({
+    korttext: z.string().default(''),
     texter: z
       .array(
         z.object({
