@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel/serverless';
 
 // When a loose markdown list results in a trailing <p> being parsed as the last
 // block child of the last <li>, move that <p> out to after the </ul>/<ol>.
