@@ -15,7 +15,7 @@ const cards = (start?.data.texter ?? []).flatMap((item) => {
 
 const Welcome = start ? (await start.render()).Content : null;
 ---
-<BaseLayout title="Things Written" description="Texter av Things Written.">
+<BaseLayout title="Things Written" description={start?.data.beskrivning || undefined}>
   {Welcome && (
     <section class="welcome">
       <Welcome />

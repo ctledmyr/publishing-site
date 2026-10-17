@@ -3,6 +3,9 @@
 # slug = sista delen av textens adress, t.ex. "parken" för /posts/parken
 # rad  = en rad egen text som visas under titeln på kortet
 # En slug som inte finns hoppas över.
+# beskrivning = kort text som visas när en länk till startsidan eller /texter
+#   delas (SMS, WhatsApp, Messenger m.fl.) och i sökmotorer
+beskrivning: "Mitt försök att klä det jag ser i ord. Triviala saker, men också det som är tillvaron för ett får i vår herres hage."
 # korttext = texten som visas ovanför korten
 korttext: "Här är tre texter som jag gillar om du inte vet vart du ska börja"
 texter:

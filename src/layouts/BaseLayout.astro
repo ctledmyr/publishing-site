@@ -4,12 +4,24 @@ import SubscribeForm from '../components/SubscribeForm.astro';
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
 }
 
-const { title, description = 'A handwritten publishing site.' } = Astro.props;
+const SITE_ORIGIN = 'https://www.thingswritten.se';
+const SITE_NAME = 'Things Written';
+
+const {
+  title,
+  description = 'Texter av Things Written.',
+  image = '/og-image.png',
+  type = 'website',
+} = Astro.props;
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 // Admin pages share this layout but should not show the subscribe form
+const canonicalURL = new URL(path, SITE_ORIGIN).href;
+const imageURL = new URL(image, SITE_ORIGIN).href;
 const showSubscribe = !path.startsWith('/admin');
 const navLinks = [
   { href: '/', label: 'Start' },
@@ -24,6 +36,23 @@ const navLinks = [
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="sv_SE" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={SITE_NAME} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
     <style>
       *, *::before, *::after {
         box-sizing: border-box;

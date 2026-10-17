@@ -1,15 +1,16 @@
 ---
 export const prerender = false;
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+const start = await getEntry('start', 'start');
 const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 const renderedPosts = await Promise.all(
   posts.map(async (post) => ({ post, Content: (await post.render()).Content }))
 );
 ---
-<BaseLayout title="Things Written" description="A handwritten publishing journal.">
+<BaseLayout title="Things Written" description={start?.data.beskrivning || undefined}>
   <section class="posts-section">
     <h1>Texter</h1>
 
