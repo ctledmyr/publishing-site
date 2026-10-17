@@ -4,12 +4,12 @@
 # rad  = en rad egen text som visas under titeln på kortet
 # En slug som inte finns hoppas över.
 texter:
-  - slug: "skriv-slug-här-1"
-    rad: "Skriv en rad om den första texten här."
-  - slug: "skriv-slug-här-2"
-    rad: "Skriv en rad om den andra texten här."
-  - slug: "skriv-slug-här-3"
-    rad: "Skriv en rad om den tredje texten här."
+  - slug: "jag-vill-verkligen"
+    rad: "Kort beskrivning kommer"
+  - slug: "kollegor-emellan"
+    rad: "Kort beskrivning kommer"
+  - slug: "lngtan-r-ver"
+    rad: "Kort beskrivning kommer"
 ---
 
 ”Det finns många får i vår herres hage”, kan min pappa säga från tid till annan. Pappa säger så för att belysa beteenden som för honom är överraskande eller till och med idiotiska.
