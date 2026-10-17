@@ -41,10 +41,27 @@ const Welcome = start ? (await start.render()).Content : null;
 </BaseLayout>
 
 <style>
+  /* Warm page tone behind the letter, landing page only */
+  :global(html body:has(.welcome)) {
+    background-color: #f7f5f1;
+  }
+
   .welcome {
     font-size: 1.0625rem;
     line-height: 1.8;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
+    padding: 48px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 8px 28px rgba(0, 0, 0, 0.07);
+  }
+
+  @media (max-width: 600px) {
+    .welcome {
+      padding: 24px;
+    }
   }
 
   .welcome :global(p) {
