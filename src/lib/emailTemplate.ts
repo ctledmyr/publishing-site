@@ -84,7 +84,7 @@ export function generateWelcomeEmail({ unsubscribeURL }: { unsubscribeURL: strin
     <p style="margin: 0 0 16px 0; font-size: 11pt; line-height: 1.7; mso-line-height-rule: exactly;">Nu kommer du f&aring; alla nya texter levererade till din inkorg!</p>
     <p style="margin: 0 0 16px 0; font-size: 11pt; line-height: 1.7; mso-line-height-rule: exactly;">F&ouml;rhoppningsvis landade det h&auml;r mailet i din vanliga inkorg. I s&aring; fall kan vi b&aring;da andas ut.</p>
     <p style="margin: 0 0 16px 0; font-size: 11pt; line-height: 1.7; mso-line-height-rule: exactly;">Om (ve och fasa) det hamnade i din skr&auml;ppost beh&ouml;ver du trycka p&aring; knappen som s&auml;ger n&aring;got i stil med &rdquo;det h&auml;r &auml;r inte skr&auml;ppost&rdquo;.</p>
-    <p style="margin: 0 0 16px 0; font-size: 11pt; line-height: 1.7; mso-line-height-rule: exactly;">Vi h&ouml;rs,<br>CT</p>
+    <p style="margin: 0 0 16px 0; font-size: 11pt; line-height: 1.7; mso-line-height-rule: exactly;">Vi h&ouml;rs snart,<br>CT</p>
     <p style="font-size: 14px; color: #777777; font-style: italic; line-height: 1.7; mso-line-height-rule: exactly;">PS. N&auml;r mina texter k&auml;nns mer som spam &auml;n l&auml;sgl&auml;dje, finns det nog en knapp n&aring;gonstans f&ouml;r att avsluta prenumerationen och bli av med mig. Men den f&aring;r du hitta sj&auml;lv.</p>`,
     `<p style="margin: 0 0 4px 0; font-size: 13px; line-height: 1.8; mso-line-height-rule: exactly;">Du prenumererar p&aring; <a href="https://www.thingswritten.se" style="color: #999999; font-size: 13px;">Things Written</a></p>
     <p style="margin: 0; font-size: 13px; line-height: 1.8; mso-line-height-rule: exactly;">Vill du avsluta prenumerationen? <a href="${escapeHTML(unsubscribeURL)}" style="color: #999999; font-size: 13px;">Avprenumerera</a></p>`
@@ -98,7 +98,7 @@ Förhoppningsvis landade det här mailet i din vanliga inkorg. I så fall kan vi
 
 Om (ve och fasa) det hamnade i din skräppost behöver du trycka på knappen som säger något i stil med ”det här är inte skräppost”.
 
-Vi hörs,
+Vi hörs snart,
 CT
 
 PS. När mina texter känns mer som spam än läsglädje, finns det nog en knapp någonstans för att avsluta prenumerationen och bli av med mig. Men den får du hitta själv.
