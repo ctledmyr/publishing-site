@@ -6,6 +6,9 @@
 # beskrivning = kort text som visas när en länk till startsidan eller /texter
 #   delas (SMS, WhatsApp, Messenger m.fl.) och i sökmotorer
 beskrivning: "Mitt försök att klä det jag ser i ord. Triviala saker, men också det som är tillvaron för ett får i vår herres hage."
+# textbeskrivning = samma sak, men för varje enskild text. En text som har
+#   description i sin egen frontmatter använder den i stället.
+textbeskrivning: "Sätt dig bekvämt och slappna av. Redo? Klicka..."
 # korttext = texten som visas ovanför korten
 korttext: "Här är tre texter som jag gillar om du inte vet vart du ska börja"
 texter:

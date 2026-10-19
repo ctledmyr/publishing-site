@@ -7,7 +7,7 @@ const posts = defineCollection({
     // z.coerce.date() is required: YAML parses dates as strings, coerce converts them
     date: z.coerce.date(),
     draft: z.boolean().default(false),
-    // Optional share/SEO description; falls back to an excerpt of the text
+    // Optional share/SEO description; falls back to textbeskrivning in start.md
     description: z.string().optional(),
   }),
 });
@@ -18,6 +18,7 @@ const start = defineCollection({
   schema: z.object({
     korttext: z.string().default(''),
     beskrivning: z.string().default(''),
+    textbeskrivning: z.string().default(''),
     texter: z
       .array(
         z.object({

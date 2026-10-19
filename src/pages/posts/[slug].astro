@@ -1,7 +1,6 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
-import { excerpt } from '../../lib/excerpt';
 
 // Prerender post pages at build time (output: 'hybrid' mode)
 export const prerender = true;
@@ -16,10 +15,11 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+const start = await getEntry('start', 'start');
 ---
 <PostLayout
   title={post.data.title}
-  description={post.data.description?.trim() || excerpt(post.body)}
+  description={post.data.description?.trim() || start?.data.textbeskrivning || undefined}
   date={post.data.date}
 >
   <Content />
