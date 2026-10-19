@@ -12,12 +12,12 @@ textbeskrivning: "Sätt dig bekvämt och slappna av. Redo? Klicka..."
 # korttext = texten som visas ovanför korten
 korttext: "Här är tre texter som jag gillar om du inte vet vart du ska börja"
 texter:
-  - slug: "jag-vill-verkligen"
-    rad: "Kort beskrivning kommer"
-  - slug: "kollegor-emellan"
-    rad: "Kort beskrivning kommer"
   - slug: "lngtan-r-ver"
-    rad: "Kort beskrivning kommer"
+    rad: "En inblick i livet med kollegorna."
+  - slug: "sommarfoljetong-i-tre-delar"
+    rad: "Sommaridyllen utvecklas till något den inte alltid har varit."
+  - slug: "en-otrolig-mjlighet"
+    rad: "Som småbarnsförälder är det här för bra för att vara sant. Eller?"
 ---
 
 # Hej på dig,
