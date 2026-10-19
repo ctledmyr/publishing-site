@@ -41,6 +41,12 @@ export default defineConfig({
   output: 'hybrid',
   adapter: vercel(),
   site: process.env.SITE_URL,
+  // Old URLs for posts that were merged or renamed (permanent redirects)
+  redirects: {
+    '/posts/sommarfljetong-del-i-mellan-tallarna': { status: 301, destination: '/posts/sommarfoljetong-i-tre-delar' },
+    '/posts/sommarfljetong-del-ii-genom-hcken': { status: 301, destination: '/posts/sommarfoljetong-i-tre-delar' },
+    '/posts/sommarfljetong-del-iii-ver-staketet': { status: 301, destination: '/posts/sommarfoljetong-i-tre-delar' },
+  },
   markdown: {
     rehypePlugins: [rehypeUnwrapListTrailingParagraph],
   },

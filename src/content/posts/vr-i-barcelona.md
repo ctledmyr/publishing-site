@@ -1,6 +1,5 @@
 ---
 title: "Vår i Barcelona"
-description: "En gång leder dig från promenadsträcket till stranden"
 date: "2026-03-03"
 draft: false
 ---
