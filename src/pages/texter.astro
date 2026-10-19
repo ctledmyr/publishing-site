@@ -122,6 +122,20 @@ const renderedPosts = await Promise.all(
     line-height: 1.8;
   }
 
+  .post-content :global(h2),
+  .post-content :global(h3) {
+    font-family: inherit;
+    font-size: 1em;
+    line-height: inherit;
+    font-weight: bold;
+    margin: 2rem 0 0.75rem 0;
+  }
+
+  .post-content :global(h2:first-child),
+  .post-content :global(h3:first-child) {
+    margin-top: 0;
+  }
+
   .post-content :global(p) {
     margin: 0 0 1.8em 0;
   }
